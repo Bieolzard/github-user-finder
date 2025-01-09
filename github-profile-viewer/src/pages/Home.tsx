@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Input, Button, Box, Flex, Text, Image} from '@chakra-ui/react';
-import { InputGroup } from "../components/ui/input-group"
+import { Box, Button, Text, Image, Input } from '@chakra-ui/react';
 import { LuSearch } from 'react-icons/lu';
-import logo from '../assets/logo.png'; // Caminho relativo correto
-
-
-
+import logo from '../assets/logo.png';
+import { InputGroup } from "../components/ui/input-group"
 
 const Home = () => {
     const [username, setUsername] = useState('');
@@ -24,22 +21,81 @@ const Home = () => {
     };
 
     return (
-        <Flex
-            direction="column"
-            align="center"
-            justify="center"
+        <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
             backgroundColor="#FFF"
             minHeight="100vh"
-            height="100%"
+            padding={{ base: '20px', md: '40px' }} // Responsividade no padding
         >
-            <Image src={logo} alt="SearchFor DEVs" />
+            {/* Logo responsivo */}
+            <Image
+                src={logo}
+                alt="SearchFor DEVs"
+                mb={6} // Margin bottom
+            />
 
             {/* Input de pesquisa */}
-            <Box display={'flex'} justifyContent={'center'} mt="56px" width="100%">
-                <Flex justify="center" align="center">
-                    <InputGroup startElement={<LuSearch />}>
+            <Box
+                display="flex"
+                justifyContent="center"
+                mt={{ base: '20px', sm: '40px', md: '56px' }}
+                width="100%"
+            >
+                <Box
+                    display={{ base: 'flex', md: 'none' }} // Exibe no mobile
+                    width="100%"
+                    position="relative"
+                    marginBottom="20px"
+                >
+                    {/* Input customizado para mobile */}
+                    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginTop: '15px', left: '25%'}}>
+                        <label
+                            htmlFor="mobile-search"
+                            style={{
+                                position: 'absolute',
+                                top: '-8px',
+                                left: '12px',
+                                backgroundColor: '#FFF',
+                                paddingInline: '4px',
+                                borderRadius: '8px',
+                                color: '#1C1B1F',
+                                fontSize: '14px',
+                            }}
+                        >
+                            Search
+                        </label>
+                        <input
+                            type="text"
+                            id="mobile-search"
+                            placeholder="Search"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            style={{
+                                fontSize: '16px',
+                                padding: '12px 16px',
+                                border: '1px solid #1C1B1F',
+                                borderRadius: '4px',
+                                marginBottom: '10px',
+                                outline: 'none',
+                                width: '100%',
+                                color: '#1C1B1F',
+                                backgroundColor: 'transparent'
+                            }}
+                        />
+                    </div>
+                </Box>
+
+                <Box
+                    display={{ base: 'none', md: 'flex' }} // Exibe no desktop
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    {/* Input Chakra UI para desktop */}
+                    <InputGroup startElement={<LuSearch />} width="592px">
                         <Input
-                            width={"592px"}
                             placeholder="Search"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
@@ -51,24 +107,30 @@ const Home = () => {
                                 borderColor: "#E2E8F0",
                                 boxShadow: "0 0 0 1px #E2E8F0",
                             }}
+                            width="100%"
+                            color={'black'}
                         />
                     </InputGroup>
+                </Box>
 
-                    <Button
-                        backgroundColor="#8C19D2"
-                        color="white"
-                        onClick={handleSearch}
-                        paddingBlock={"10px"}
-                        paddingInline={"57.5px"}
-                        marginStart={"32px"}
-                    >
-                        Search
-                    </Button>
-                </Flex>
+                {/* Botão de pesquisa */}
+                <Button
+                    backgroundColor="#8C19D2"
+                    color="white"
+                    onClick={handleSearch}
+                    paddingBlock="10px"
+                    paddingInline="57.5px"
+                    marginStart={{ base: '0', sm: '32px' }} // Responsividade na margem
+                    width={{ base: '100%', md: 'auto' }} // Responsividade no botão
+                    display={{ base: 'none', md: 'inline-flex' }} // Esconde o botão em mobile
+                >
+                    Search
+                </Button>
+
             </Box>
 
             {error && <Text color="red.500" mt={3}>{error}</Text>}
-        </Flex>
+        </Box>
     );
 };
 
