@@ -1,57 +1,56 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Text, Image, Input } from '@chakra-ui/react';
+import { Box, Button, Text, Image, Input, Spinner } from '@chakra-ui/react';
 import { LuSearch } from 'react-icons/lu';
 import logo from '../assets/logo.png';
-import { InputGroup } from "../components/ui/input-group"
+import { InputGroup } from "../components/ui/input-group";
 import { useTranslation } from 'react-i18next'; // Importa o hook
-import axiosInstance from '../axiosInstance'; // Importa a instância
-import axios from 'axios'; // Importando o tipo de erro do Axios
+import axiosInstance from '../axiosInstance'; // Instância do axios
+import axios from 'axios';
 
 const Home = () => {
     const [username, setUsername] = useState('');
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false); // Estado de carregamento
     const navigate = useNavigate();
     const { t } = useTranslation(); // Hook para acessar traduções
 
- const handleSearch = async () => {
-    const userNameRegex = /^[a-zA-Z0-9-_]+$/;
+    const handleSearch = async () => {
+        const userNameRegex = /^[a-zA-Z0-9-_]+$/;
 
-    // Verificando se o campo está vazio ou se o nome do usuário é inválido
-    if (!username) {
-        setError(t("error.emptyField"));
-    } else if (!userNameRegex.test(username)) {
-        setError(t("error.invalidUsername"));
-    } else {
-        setError(null); // Limpando qualquer erro anterior
+        if (!username) {
+            setError(t("error.emptyField"));
+        } else if (!userNameRegex.test(username)) {
+            setError(t("error.invalidUsername"));
+        } else {
+            setError(null);
+            setLoading(true); // Ativa o carregamento
 
-        try {
-            // Requisição à API do GitHub para verificar se o usuário existe
-            const response = await axiosInstance.get(`https://api.github.com/users/${username}`);
+            try {
+                // Requisição à API do GitHub para verificar se o usuário existe
+                const response = await axiosInstance.get(`/users/${username}`);
 
-            // Se o usuário for encontrado, navegue para o perfil
-            if (response.status === 200) {
-                navigate(`/profile/${username}`);
-            } else {
-                setError(t("error.userNotFound"));
-            }
-        } catch (error) {
-            // Capturando erros gerais da requisição
-            if (axios.isAxiosError(error)) {
-                // Verificando se o erro é 404, ou outro erro
-                if (error.response?.status === 404) {
+                if (response.status === 200) {
+                    navigate(`/profile/${username}`);
+                } else {
+                    // Em caso de erro 404, exibe a mensagem de erro
                     setError(t("error.userNotFound"));
+                }
+            } catch (error: unknown) {
+                if (axios.isAxiosError(error)) {
+                    if (error.response?.status === 404) {
+                        setError(t("error.userNotFound"));
+                    } else {
+                        setError(t("error.fetchError"));
+                    }
                 } else {
                     setError(t("error.fetchError"));
                 }
-            } else {
-                // Caso o erro não seja de Axios, trate como um erro desconhecido
-                setError(t("error.fetchError"));
+            } finally {
+                setLoading(false); // Desativa o carregamento
             }
         }
-    }
-};
-
+    };
 
     return (
         <Box
@@ -68,7 +67,6 @@ const Home = () => {
                 src={logo}
                 alt={t("alt.logo")}
                 mb={6}
-
             />
 
             {/* Input de pesquisa */}
@@ -168,7 +166,6 @@ const Home = () => {
                     </InputGroup>
                 </Box>
 
-
                 <Button
                     backgroundColor="#8C19D2"
                     color="white"
@@ -184,8 +181,43 @@ const Home = () => {
                     {t("button.search")}
                 </Button>
             </Box>
-           
-            {error && <Text color="red.500" mt={3}>{error}</Text>}
+
+            {/* Exibição do estado de carregamento */}
+            {loading && (
+                <Box display="flex" justifyContent="center" mt={6}>
+                    <Spinner size="xl" color="purple.500" />
+                </Box>
+            )}
+
+            {/* Exibição de erro com Box centralizado */}
+            {error && !loading && error === t("error.userNotFound") && (
+                <Box
+                    mt={6}
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    width="100%"
+                    maxWidth="500px"
+                    mx="auto"
+                    p={4}
+                    backgroundColor="red.100"  // Cor de fundo do erro
+                    borderRadius="8px"
+                    boxShadow="lg"  // Adiciona uma sombra para um destaque maior
+                    border="2px solid"  // Borda para aumentar o destaque
+                    borderColor="red.600"  // Cor da borda
+                >
+                    <Text fontSize="lg" fontWeight="bold" color="red.600" mb={2}>
+                        {t("error.userNotFoundTitle")} {/* Título mais específico */}
+                    </Text>
+                    <Box display="flex" alignItems="center">
+                        <Text fontSize="md" color="red.500" mr={2}>
+                            {t("error.userNotFoundMessage")}
+                        </Text>
+                        <LuSearch size={20} color="red.600" /> {/* Ícone para reforçar a ideia */}
+                    </Box>
+                </Box>
+            )}
         </Box>
     );
 };
