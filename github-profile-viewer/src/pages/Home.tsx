@@ -5,6 +5,8 @@ import { LuSearch } from 'react-icons/lu';
 import logo from '../assets/logo.png';
 import { InputGroup } from "../components/ui/input-group"
 import { useTranslation } from 'react-i18next'; // Importa o hook
+import axiosInstance from '../axiosInstance'; // Importa a instância
+import axios from 'axios'; // Importando o tipo de erro do Axios
 
 const Home = () => {
     const [username, setUsername] = useState('');
@@ -12,18 +14,44 @@ const Home = () => {
     const navigate = useNavigate();
     const { t } = useTranslation(); // Hook para acessar traduções
 
-    const handleSearch = () => {
-        const userNameRegex = /^[a-zA-Z0-9-_]+$/;
+ const handleSearch = async () => {
+    const userNameRegex = /^[a-zA-Z0-9-_]+$/;
 
-        if (!username) {
-            setError(t("error.emptyField"));
-        } else if (!userNameRegex.test(username)) {
-            setError(t("error.invalidUsername"));
-        } else {
-            setError(null);
-            navigate(`/profile/${username}`)
+    // Verificando se o campo está vazio ou se o nome do usuário é inválido
+    if (!username) {
+        setError(t("error.emptyField"));
+    } else if (!userNameRegex.test(username)) {
+        setError(t("error.invalidUsername"));
+    } else {
+        setError(null); // Limpando qualquer erro anterior
+
+        try {
+            // Requisição à API do GitHub para verificar se o usuário existe
+            const response = await axiosInstance.get(`https://api.github.com/users/${username}`);
+
+            // Se o usuário for encontrado, navegue para o perfil
+            if (response.status === 200) {
+                navigate(`/profile/${username}`);
+            } else {
+                setError(t("error.userNotFound"));
+            }
+        } catch (error) {
+            // Capturando erros gerais da requisição
+            if (axios.isAxiosError(error)) {
+                // Verificando se o erro é 404, ou outro erro
+                if (error.response?.status === 404) {
+                    setError(t("error.userNotFound"));
+                } else {
+                    setError(t("error.fetchError"));
+                }
+            } else {
+                // Caso o erro não seja de Axios, trate como um erro desconhecido
+                setError(t("error.fetchError"));
+            }
         }
-    };
+    }
+};
+
 
     return (
         <Box
