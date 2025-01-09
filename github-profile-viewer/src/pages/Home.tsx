@@ -51,7 +51,16 @@ const Home = () => {
                     marginBottom="20px"
                 >
                     {/* Input customizado para mobile */}
-                    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', marginTop: '15px', left: '25%'}}>
+                    <div style={{
+                        position: 'relative',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        marginTop: '15px',
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                        width: '80%' // Ajuste a largura conforme necessário
+                    }}>
+
                         <label
                             htmlFor="mobile-search"
                             style={{
@@ -65,8 +74,19 @@ const Home = () => {
                                 fontSize: '14px',
                             }}
                         >
-                            Search
+                            Label
                         </label>
+                        <div style={{
+                            position: 'absolute',
+                            left: '10px',
+                            top: '44%',
+                            transform: 'translateY(-50%)',
+                            color: '#1C1B1F',
+                            fontSize: '18px'
+                        }}>
+                            <LuSearch />
+                        </div>
+
                         <input
                             type="text"
                             id="mobile-search"
@@ -75,14 +95,14 @@ const Home = () => {
                             onChange={(e) => setUsername(e.target.value)}
                             style={{
                                 fontSize: '16px',
-                                padding: '12px 16px',
+                                padding: '12px 16px 12px 36px', // Espaço extra à esquerda para a lupa
                                 border: '1px solid #1C1B1F',
                                 borderRadius: '4px',
                                 marginBottom: '10px',
                                 outline: 'none',
                                 width: '100%',
                                 color: '#1C1B1F',
-                                backgroundColor: 'transparent'
+                                backgroundColor: 'transparent',
                             }}
                         />
                     </div>
@@ -130,7 +150,7 @@ const Home = () => {
             </Box>
 
             {error && <Text color="red.500" mt={3}>{error}</Text>}
-        </Box>
+        </Box >
     );
 };
 
