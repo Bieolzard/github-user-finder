@@ -17,7 +17,7 @@ const Home = () => {
 
         if (!username) {
             setError(t("error.emptyField"));
-        } else if (!userNameRegex.test(username)){
+        } else if (!userNameRegex.test(username)) {
             setError(t("error.invalidUsername"));
         } else {
             setError(null);
@@ -40,6 +40,7 @@ const Home = () => {
                 src={logo}
                 alt={t("alt.logo")}
                 mb={6}
+
             />
 
             {/* Input de pesquisa */}
@@ -122,19 +123,23 @@ const Home = () => {
                             placeholder={t("placeholder.search")}
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            aria-label={t("aria.label.search")}
+                            aria-describedby="search-helper-text"
                             borderRadius="6px"
                             borderColor="#E2E8F0"
                             borderWidth="1px"
-                            _hover={{ borderColor: "#E2E8F0" }}
+                            transition="all 0.3s ease-in-out"
+                            _hover={{ borderColor: "#8C19D2", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}
                             _focus={{
-                                borderColor: "#E2E8F0",
-                                boxShadow: "0 0 0 1px #E2E8F0",
+                                borderColor: "#8C19D2",
+                                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
                             }}
                             width="100%"
                             color={'black'}
                         />
                     </InputGroup>
                 </Box>
+
 
                 <Button
                     backgroundColor="#8C19D2"
@@ -145,11 +150,13 @@ const Home = () => {
                     marginStart={{ base: '0', sm: '32px' }}
                     width={{ base: '100%', md: 'auto' }}
                     display={{ base: 'none', md: 'inline-flex' }}
+                    _hover={{ backgroundColor: "#7A14C2", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}
+                    transition="all 0.3s ease-in-out"
                 >
                     {t("button.search")}
                 </Button>
             </Box>
-
+           
             {error && <Text color="red.500" mt={3}>{error}</Text>}
         </Box>
     );
