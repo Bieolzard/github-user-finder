@@ -7,7 +7,8 @@
     "emptyField": "Please enter a username",
     "invalidUsername": "Invalid username format",
     "userNotFound": "No users found with this name",
-    "fetchError": "There was an error fetching the data"
+    "fetchError": "There was an error fetching the data",
+    "noRepos": "This user doesn't have any public repositories yet."
   },
   "profile": {
     "noMoreRepos": "You have reached the end of the list.",

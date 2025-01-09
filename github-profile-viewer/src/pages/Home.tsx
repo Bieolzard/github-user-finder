@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Text, Image, Input, Spinner } from '@chakra-ui/react';
+import { Box, Button, Image, Input, Spinner, Text } from '@chakra-ui/react';
 import { LuSearch } from 'react-icons/lu';
 import logo from '../assets/logo.png';
 import { InputGroup } from "../components/ui/input-group";
@@ -10,8 +10,8 @@ import axios from 'axios';
 
 const Home = () => {
     const [username, setUsername] = useState('');
-    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false); // Estado de carregamento
+    const [error, setError] = useState<string | null>(null); // Estado para o erro
     const navigate = useNavigate();
     const { t } = useTranslation(); // Hook para acessar traduções
 
@@ -23,7 +23,6 @@ const Home = () => {
         } else if (!userNameRegex.test(username)) {
             setError(t("error.invalidUsername"));
         } else {
-            setError(null);
             setLoading(true); // Ativa o carregamento
 
             try {
@@ -31,19 +30,33 @@ const Home = () => {
                 const response = await axiosInstance.get(`/users/${username}`);
 
                 if (response.status === 200) {
+                    // Usuário encontrado, agora verificamos se ele tem repositórios
+                    const repoResponse = await axiosInstance.get(`/users/${username}/repos`);
+
+                    // Se o usuário não tiver repositórios
+                    if (repoResponse.data.length === 0) {
+                        setError(t("error.noRepos")); // Mensagem para usuário sem repositórios
+                        setLoading(false);
+                        return;
+                    }
+
+                    // Se o usuário tem repositórios, navega para a página de perfil
                     navigate(`/profile/${username}`);
                 } else {
-                    // Em caso de erro 404, exibe a mensagem de erro
+                    // Em caso de erro inesperado
                     setError(t("error.userNotFound"));
                 }
             } catch (error: unknown) {
                 if (axios.isAxiosError(error)) {
                     if (error.response?.status === 404) {
+                        // Exibe erro de usuário não encontrado
                         setError(t("error.userNotFound"));
                     } else {
+                        // Exibe erro genérico de falha na requisição
                         setError(t("error.fetchError"));
                     }
                 } else {
+                    // Exibe erro genérico de falha na requisição
                     setError(t("error.fetchError"));
                 }
             } finally {
@@ -51,6 +64,7 @@ const Home = () => {
             }
         }
     };
+
 
     return (
         <Box
@@ -189,32 +203,42 @@ const Home = () => {
                 </Box>
             )}
 
-            {/* Exibição de erro com Box centralizado */}
-            {error && !loading && error === t("error.userNotFound") && (
+            {error && (
                 <Box
-                    mt={6}
                     display="flex"
-                    flexDirection="column"
-                    alignItems="center"
                     justifyContent="center"
-                    width="100%"
-                    maxWidth="500px"
-                    mx="auto"
-                    p={4}
-                    backgroundColor="red.100"  // Cor de fundo do erro
-                    borderRadius="8px"
-                    boxShadow="lg"  // Adiciona uma sombra para um destaque maior
-                    border="2px solid"  // Borda para aumentar o destaque
-                    borderColor="red.600"  // Cor da borda
+                    alignItems="center"
+                    position="absolute"
+                    top="0"
+                    left="0"
+                    right="0"
+                    bottom="0"
+                    backgroundColor="rgba(0, 0, 0, 0.5)" // Fundo escurecido
+                    zIndex={999}
                 >
-                    <Text fontSize="lg" fontWeight="bold" color="red.600" mb={2}>
-                        {t("error.userNotFoundTitle")} {/* Título mais específico */}
-                    </Text>
-                    <Box display="flex" alignItems="center">
-                        <Text fontSize="md" color="red.500" mr={2}>
-                            {t("error.userNotFoundMessage")}
+                    <Box
+                        backgroundColor={error === t("error.noRepos") ? "white" : "red.500"}
+                        color={error === t("error.noRepos") ? "red" : "white"}
+                        padding="16px"
+                        borderRadius="8px"
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        width="90%"
+                        maxWidth="500px"
+                    >
+                        <Text fontSize="lg" fontWeight="bold">
+                            {error}
                         </Text>
-                        <LuSearch size={20} color="red.600" /> {/* Ícone para reforçar a ideia */}
+                        <Button
+                            onClick={() => setError(null)} // Fechar a mensagem de erro
+                            backgroundColor="transparent"
+                            border="none"
+                            color={error === t("error.noRepos") ? "black" : "white"}
+                            fontSize="xl"
+                        >
+                            ×
+                        </Button>
                     </Box>
                 </Box>
             )}

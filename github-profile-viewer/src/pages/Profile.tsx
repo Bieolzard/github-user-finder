@@ -66,56 +66,144 @@ const Profile = () => {
   const [repos, setRepos] = useState<Repo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
+  const [, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const { t } = useTranslation();
 
   // Função para buscar os dados do usuário e repositórios
-  const fetchData = async (page: number) => {
-    try {
-      setLoading(true);
-      const userResponse = await axiosInstance.get(`/users/${username}`);
-      const repoResponse = await axiosInstance.get(`/users/${username}/repos?per_page=10&page=${page}`);
-
-      // Validação com Zod
-      const userValidated = userSchema.parse(userResponse.data);
-      const reposValidated = repoResponse.data.map((repo: unknown) => repoSchema.parse(repo));
-
-      setUserData(userValidated);
-      setRepos((prevRepos) => [...prevRepos, ...reposValidated]);
-      setLoading(false);
-
-      if (reposValidated.length < 10) {
-        setHasMore(false);
-      }
-    } catch (err) {
-      console.error(err);
+ // Função para buscar os dados do usuário e repositórios
+const fetchData = async (page: number) => {
+  try {
+    setLoading(true);
+    const userResponse = await axiosInstance.get(`/users/${username}`);
+    
+    // Verificar se o usuário realmente existe (erro 404)
+    if (userResponse.status === 404) {
       setError(t("error.userNotFound"));
       setLoading(false);
+      return; // Parar a execução se o usuário não for encontrado
     }
-  };
+
+    const repoResponse = await axiosInstance.get(`/users/${username}/repos?per_page=10&page=${page}`);
+
+    // Validação com Zod
+    const userValidated = userSchema.parse(userResponse.data);
+    const reposValidated = repoResponse.data.map((repo: unknown) => repoSchema.parse(repo));
+
+    setUserData(userValidated);
+    setRepos((prevRepos) => {
+      const newRepos = [...prevRepos, ...reposValidated];
+      return Array.from(new Set(newRepos.map(repo => repo.name)))  // Garantindo que o nome do repositório seja único
+        .map(name => newRepos.find(repo => repo.name === name));  // Extrai os objetos únicos baseados no nome
+    });
+    setLoading(false);
+
+    if (reposValidated.length < 10) {
+      setHasMore(false);
+    } else {
+      setHasMore(true); // Garantir que a flag continue verdadeira se ainda houver mais repositórios
+    }
+
+  } catch (err) {
+    console.error(err);
+    setError(t("Usuário não possui repositórios publicados até o momento")); // Tratamento para erro genérico
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     if (username) {
-      // Limpa os dados antes de carregar novos
       setUserData(null);
       setRepos([]);
       setError(null);
       setPage(1);
       setHasMore(true);
       setLoading(true);
-
-      // Busca os novos dados do usuário
       fetchData(1);
     }
   }, [username]);
 
   const fetchMoreRepos = () => {
-    setPage((prevPage) => prevPage + 1);
+  if (!loading && hasMore) {
+    setPage((prevPage) => {
+      const nextPage = prevPage + 1;
+      fetchData(nextPage); // Chama a função para buscar os repositórios da próxima página
+      return nextPage;  // Atualiza o estado da página
+    });
+  }
   };
 
-  if (loading && page === 1) return <Spinner size="xl" />;
-  if (error) return <Text color="red.500">{error}</Text>;
+if (error) return (
+  <Box
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+    position="absolute"
+    top="0"
+    left="0"
+    right="0"
+    bottom="0"
+    backgroundColor="white"
+    zIndex={999}
+  >
+    <Box
+      backgroundColor="red.500"
+      color="white"
+      padding="16px"
+      borderRadius="8px"
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      width="90%"
+      maxWidth="500px"
+    >
+      <Text fontSize="lg" fontWeight="bold">
+        {error && (
+  <Box
+    display="flex"
+    justifyContent="center"
+    alignItems="center"
+    position="absolute"
+    top="0"
+    left="0"
+    right="0"
+    bottom="0"
+    backgroundColor="rgba(0, 0, 0, 0.5)"
+    zIndex={999}
+  >
+    <Box
+      backgroundColor="red.500"
+      color="white"
+      padding="16px"
+      borderRadius="8px"
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      width="90%"
+      maxWidth="500px"
+    >
+      <Text fontSize="lg" fontWeight="bold">
+        {error}
+      </Text>
+      <Button
+        onClick={() => setError(null)} // Fechar a mensagem de erro
+        backgroundColor="transparent"
+        border="none"
+        color="white"
+        fontSize="xl"
+      >
+        ×
+      </Button>
+    </Box>
+  </Box>
+)}
+      </Text>
+    </Box>
+  </Box>
+);
+
+
 
   return (
     <Box backgroundColor={'#FCFCFC'}>
@@ -222,8 +310,8 @@ const Profile = () => {
                 <Link href={`https://twitter.com/${userData?.twitter_username}`} >
                   <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
                     <Twitter width="24px" height="24px" />
-                    <Button colorScheme="twitter">
-                      {t("profile.visitTwitter")}
+                    <Button colorScheme="twitter" color={'#4A5568'} padding={'0px 0px'} marginLeft={'8px'}>
+                      {userData.twitter_username}
                     </Button>
                   </Box>
                 </Link>

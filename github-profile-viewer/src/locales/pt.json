@@ -7,7 +7,8 @@
     "emptyField": "Por favor, insira um nome de usuário do GitHub",
     "invalidUsername": "O nome de usuário contém caracteres inválidos",
     "userNotFound": "Não há usuários com esse nome",
-    "fetchError": "Erro ao carregar dados"
+    "fetchError": "Ocorreu um erro ao tentar buscar os dados. Tente novamente mais tarde.",
+    "noRepos": "Este usuário não possui repositórios públicados ainda."
   },
   "profile": {
     "noMoreRepos": "Você atingiu o final da lista.",
