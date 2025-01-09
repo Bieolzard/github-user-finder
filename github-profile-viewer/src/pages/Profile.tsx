@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Button, Text, Image, Link, Spinner, HStack, VStack } from '@chakra-ui/react';
+import { Box, Button, Text, Image, Link, Spinner, HStack, VStack, Separator } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import axiosInstance from '../axiosInstance'; // Importa a instância
 import { z } from 'zod';
@@ -32,6 +32,7 @@ import Email from '../icons/email'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-expect-error 
 import StarIcon from '../icons/star.jsx'
+
 
 // Defina o modelo Zod para o usuário e os repositórios
 const userSchema = z.object({
@@ -130,105 +131,106 @@ const Profile = () => {
         {/* Primeira Coluna */}
         <VStack
           align="flex-start"
-          backgroundColor={'#FFFFFF'}
           marginBottom={4}  // Ajusta o espaçamento entre os itens dentro da coluna
-          paddingBlock={'24px'}
-          paddingInline={'16px'}
           borderRadius={'4px'}
           marginRight={"32px"}
         >
-          {/* Div para Imagem, Nome e @username lado a lado */}
-          <HStack gap={4}>
-            {/* Coluna para a Imagem */}
-            <Image
-              src={userData?.avatar_url}
-              alt={userData?.name}
-              borderRadius="full"
-              boxSize="48px"
-            />
+          <HStack align="flex-start" display={'flex'} flexDirection={'column'} backgroundColor={'#FFFFFF'} paddingBlock={'24px'}
+            paddingInline={'16px'}>
 
-            {/* Coluna para o Nome e o @username */}
-            <VStack align="flex-start" >
-              <Text fontSize="20px" fontWeight="bold" color="black" marginBottom={'4px'}>
-                {userData?.name}
-              </Text>
-              <Text color='#A0AEC0' fontSize={'14px'} fontWeight={'normal'}>
-                @{userData?.login}
-              </Text>
-            </VStack>
-          </HStack>
+            {/* Div para Imagem, Nome e @username lado a lado */}
+            <HStack gap={4}>
+              {/* Coluna para a Imagem */}
+              <Image
+                src={userData?.avatar_url}
+                alt={userData?.name}
+                borderRadius="full"
+                boxSize="48px"
+              />
 
-          {/* Bio */}
-          {userData?.bio && (
-            <Text color="#4A5568" marginBottom={'24px'} maxWidth={'248px'} fontSize={'16px'} marginTop={'16px'}>
-              {userData?.bio}
-            </Text>
-          )}
+              {/* Coluna para o Nome e o @username */}
+              <VStack align="flex-start" >
+                <Text fontSize="20px" fontWeight="bold" color="black" marginBottom={'4px'}>
+                  {userData?.name}
+                </Text>
+                <Text color='#A0AEC0' fontSize={'14px'} fontWeight={'normal'}>
+                  @{userData?.login}
+                </Text>
+              </VStack>
+            </HStack>
 
-          {/* Informações de seguidores e seguindo */}
-          <HStack>
-            <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} >
-              <FollowersIcon width="24px" height="24px" />
-              <Text fontSize="lg" color="#4A5568" marginLeft={'8px'}>
-                {userData?.followers} {t("profile.followers")}
+            {/* Bio */}
+            {userData?.bio && (
+              <Text color="#4A5568" marginBottom={'24px'} maxWidth={'380px'} fontSize={'16px'} marginTop={'16px'}>
+                {userData?.bio}
               </Text>
-            </Box>
-          </HStack>
-          <HStack>
-            <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-              <Heart width="24px" height="24px" />
-              <Text fontSize="lg" color="#4A5568" marginLeft={'8px'}>
-                {userData?.following} {t("profile.following")}
-              </Text>
-            </Box>
-          </HStack>
+            )}
 
-          {/* Informações adicionais */}
-          <VStack align="flex-start" marginTop={'24px'}>
-            {userData?.company &&
-              <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                <Company width="24px" height="24px" />
-                <Text color="#4A5568" marginLeft={'8px'}>{userData.company}</Text>
-              </Box>}
-            {userData?.location &&
-              <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                <Loc width="24px" height="24px" />
-                <Text color="#4A5568" marginLeft={'8px'}> {userData.location}</Text>
-              </Box>}
-            {userData?.email &&
-              <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                <Email width="24px" height="24px" />
-                <Text color="#4A5568" marginLeft={'8px'}>{userData.email}</Text>
+            {/* Informações de seguidores e seguindo */}
+            <HStack>
+              <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} >
+                <FollowersIcon width="24px" height="24px" />
+                <Text fontSize="lg" color="#4A5568" marginLeft={'8px'}>
+                  {userData?.followers} {t("profile.followers")}
+                </Text>
               </Box>
-            }
-            {userData?.blog && (
-              <Link href={userData.blog} >
-                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                  <Site width="24px" height="24px" />
-                  <Button
-                    margin={'0px'}
-                    padding={'0px 0px'}
-                    color={'#4A5568'}
-                    title={userData.blog}
-                    marginLeft={'8px'}
-                  >
-                    {userData.blog}
-                  </Button>
-                </Box>
-              </Link>
-            )}
-            {userData?.twitter_username && (
-              <Link href={`https://twitter.com/${userData?.twitter_username}`} >
-                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                  <Twitter width="24px" height="24px" />
-                  <Button colorScheme="twitter">
-                    {t("profile.visitTwitter")}
-                  </Button>
-                </Box>
-              </Link>
-            )}
-          </VStack>
+            </HStack>
+            <HStack>
+              <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+                <Heart width="24px" height="24px" />
+                <Text fontSize="lg" color="#4A5568" marginLeft={'8px'}>
+                  {userData?.following} {t("profile.following")}
+                </Text>
+              </Box>
+            </HStack>
 
+            {/* Informações adicionais */}
+            <VStack align="flex-start" marginTop={'24px'}>
+              {userData?.company &&
+                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+                  <Company width="24px" height="24px" />
+                  <Text color="#4A5568" marginLeft={'8px'}>{userData.company}</Text>
+                </Box>}
+              {userData?.location &&
+                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+                  <Loc width="24px" height="24px" />
+                  <Text color="#4A5568" marginLeft={'8px'}> {userData.location}</Text>
+                </Box>}
+              {userData?.email &&
+                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+                  <Email width="24px" height="24px" />
+                  <Text color="#4A5568" marginLeft={'8px'}>{userData.email}</Text>
+                </Box>
+              }
+              {userData?.blog && (
+                <Link href={userData.blog} >
+                  <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+                    <Site width="24px" height="24px" />
+                    <Button
+                      margin={'0px'}
+                      padding={'0px 0px'}
+                      color={'#4A5568'}
+                      title={userData.blog}
+                      marginLeft={'8px'}
+                    >
+                      {userData.blog}
+                    </Button>
+                  </Box>
+                </Link>
+              )}
+              {userData?.twitter_username && (
+                <Link href={`https://twitter.com/${userData?.twitter_username}`} >
+                  <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+                    <Twitter width="24px" height="24px" />
+                    <Button colorScheme="twitter">
+                      {t("profile.visitTwitter")}
+                    </Button>
+                  </Box>
+                </Link>
+              )}
+            </VStack>
+
+          </HStack>
           {/* Botão de Contato */}
           <Button
             colorScheme="blue"
@@ -269,37 +271,39 @@ const Profile = () => {
             endMessage={<Text color="black">{t("profile.noMoreRepos")}</Text>}
           >
             {repos.map((repo, index) => (
-              <Box
-                key={index}
-                p={4}
-                borderWidth={1}
-                borderRadius="md"
-                width="full"
-                marginBottom={4}
-                _hover={{ backgroundColor: "#F7FAFC", cursor: "pointer" }}
-                boxShadow="0px 4px 6px rgba(0, 0, 0, 0.1)"
-              >
-                <Link href={repo.html_url}>
-                  <Text fontWeight="bold" fontSize="lg" color="#171923">
-                    {repo.name}
+              <React.Fragment key={index}>
+                <Box
+                  key={index}
+                  p={4}
+                  borderRadius="md"
+                  width="full"
+                  marginBottom={4}
+                  _hover={{ backgroundColor: "#FCFCFC", cursor: "pointer" }}
+                >
+                  <Link href={repo.html_url}>
+                    <Text fontWeight="bold" fontSize="lg" color="#171923">
+                      {repo.name}
+                    </Text>
+                  </Link>
+
+                  <Text color="#4A5568" fontSize="16px" marginTop={2}>
+                    {repo.description || t("profile.noDescription")}
                   </Text>
-                </Link>
 
-                <Text color="#4A5568" fontSize="16px" marginTop={2}>
-                  {repo.description || t("profile.noDescription")}
-                </Text>
-
-                <HStack gap={4} marginTop={4} color="#4A5568" justify="flex-start">
-                  <HStack>
-                    <StarIcon width="24px" height="24px" color="#F6AD55" />
-                    <Text color={'#4A5568'} fontSize={'14px'}>{repo.stargazers_count}</Text>
+                  <HStack gap={"8px"} marginTop={4} color="#4A5568" justify="flex-start">
+                    <HStack>
+                      <StarIcon width="24px" height="24px" color="#F6AD55" />
+                      <Text color={'#4A5568'} fontSize={'14px'}>{repo.stargazers_count}</Text>
+                    </HStack>
+                    {/* Separador */}
+                    <Text color={'#4A5568'} fontSize={'14px'}>•</Text>
+                    <HStack>
+                      <Text color={'#4A5568'} fontSize={'14px'}>{`${t("profile.updated")} ${formatDistanceToNow(new Date(repo.updated_at), { locale: ptBR })}`}</Text>
+                    </HStack>
                   </HStack>
-
-                  <HStack>
-                    <Text color={'#4A5568'} fontSize={'14px'}>{`${t("profile.updated")} ${formatDistanceToNow(new Date(repo.updated_at), { locale: ptBR })}`}</Text>
-                  </HStack>
-                </HStack>
-              </Box>
+                </Box>
+                {index < repos.length - 1 && <Separator borderColor="gray.200" my={'16px'} />}
+              </React.Fragment>
             ))}
           </InfiniteScroll>
         </VStack>
