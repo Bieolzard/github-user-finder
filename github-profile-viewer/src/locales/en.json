@@ -1,0 +1,10 @@
+{
+  "alt.logo": "Website logo",
+  "label.search": "Search",
+  "placeholder.search": "Enter username",
+  "button.search": "Search",
+  "error": {
+    "emptyField": "Please enter a GitHub username",
+    "invalidUsername": "Username contains invalid characters"
+  }
+}
