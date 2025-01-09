@@ -6,6 +6,7 @@ import axiosInstance from '../axiosInstance'; // Importa a instância
 import { z } from 'zod';
 import { format } from 'date-fns'; // Para formatar a data
 import InfiniteScroll from 'react-infinite-scroll-component'; // Importando o Infinite Scroll
+import Header from '../components/Header'; // Importando o Header
 
 // Defina o modelo Zod para o usuário e os repositórios
 const userSchema = z.object({
@@ -78,22 +79,23 @@ const Profile = () => {
   if (error) return <Text color="red.500">{error}</Text>;
 
   return (
-    <Box padding={6}>
+    <Box backgroundColor={'#FCFCFC'} >
+      {/* Cabeçalho com a logo e a SearchBar */}
+      <Header />
+
       {/* Informações do Usuário */}
-      <Stack>
+      <Stack marginTop={8}>
         <Image src={userData?.avatar_url} alt={userData?.name} borderRadius="full" boxSize="150px" />
         <Text fontSize="2xl">{userData?.name}</Text>
         <Text>{userData?.bio}</Text>
         {userData?.blog && (
-          <Link href={userData?.blog} >
+          <Link href={userData?.blog}>
             <Button colorScheme="teal">{t("profile.visitWebsite")}</Button>
           </Link>
         )}
         {userData?.twitter_username && (
-          <Link href={`https://twitter.com/${userData?.twitter_username}`} >
-            <Button colorScheme="twitter">
-              {t("profile.visitTwitter")}
-            </Button>
+          <Link href={`https://twitter.com/${userData?.twitter_username}`}>
+            <Button colorScheme="twitter">{t("profile.visitTwitter")}</Button>
           </Link>
         )}
       </Stack>
@@ -111,7 +113,7 @@ const Profile = () => {
           <Stack>
             {repos.map((repo, index) => (
               <Box key={index} p={4} borderWidth={1} borderRadius="md">
-                <Link href={repo.html_url} >
+                <Link href={repo.html_url}>
                   <Text fontWeight="bold">{repo.name}</Text>
                 </Link>
                 <Text>{t("profile.stars")}: {repo.stargazers_count}</Text>
