@@ -96,12 +96,21 @@ const Profile = () => {
 
   useEffect(() => {
     if (username) {
-      fetchData(page); // Carregar dados na primeira renderização
+      // Limpa os dados antes de carregar novos
+      setUserData(null);
+      setRepos([]);
+      setError(null);
+      setPage(1);
+      setHasMore(true);
+      setLoading(true);
+
+      // Busca os novos dados do usuário
+      fetchData(1);
     }
-  }, [username, page]);
+  }, [username]);
 
   const fetchMoreRepos = () => {
-    setPage(prevPage => prevPage + 1); // Incrementar a página
+    setPage((prevPage) => prevPage + 1);
   };
 
   if (loading && page === 1) return <Spinner size="xl" />;
@@ -126,6 +135,7 @@ const Profile = () => {
           paddingBlock={'24px'}
           paddingInline={'16px'}
           borderRadius={'4px'}
+          marginRight={"32px"}
         >
           {/* Div para Imagem, Nome e @username lado a lado */}
           <HStack gap={4}>
@@ -238,20 +248,24 @@ const Profile = () => {
 
         {/* Segunda Coluna (Repositórios) */}
         <VStack
+          id="scrollable"
           align="flex-start"
           flex="1"
-          maxHeight="calc(100vh - 80px)"
-          overflow="auto"
+          maxHeight="calc(100vh - 80px)" // Altura dinâmica
+          overflow="auto" // Scroll gerenciado aqui
+          backgroundColor={'#FFFFFF'}
+          borderRadius={'4px'}
+          padding={'24px'}
+          className="scrollable" // Aplicando a classe CSS
+          maxWidth={'856px'}
         >
-          <Text fontSize="lg" fontWeight="bold" color="black" marginBottom={4}>
-            {t("profile.repositories")}
-          </Text>
 
           <InfiniteScroll
             dataLength={repos.length}
             next={fetchMoreRepos}
             hasMore={hasMore}
             loader={<Spinner size="xl" />}
+            scrollableTarget="scrollable" // Indica que o scroll deve ser gerenciado pelo `VStack`
             endMessage={<Text color="black">{t("profile.noMoreRepos")}</Text>}
           >
             {repos.map((repo, index) => (
@@ -271,18 +285,18 @@ const Profile = () => {
                   </Text>
                 </Link>
 
-                <Text color="#4A5568" fontSize="sm" marginTop={2}>
+                <Text color="#4A5568" fontSize="16px" marginTop={2}>
                   {repo.description || t("profile.noDescription")}
                 </Text>
 
                 <HStack gap={4} marginTop={4} color="#4A5568" justify="flex-start">
                   <HStack>
                     <StarIcon width="24px" height="24px" color="#F6AD55" />
-                    <Text>{repo.stargazers_count}</Text>
+                    <Text color={'#4A5568'} fontSize={'14px'}>{repo.stargazers_count}</Text>
                   </HStack>
 
                   <HStack>
-                    <Text>{`${t("profile.updated")} ${formatDistanceToNow(new Date(repo.updated_at), { locale: ptBR })}`}</Text>
+                    <Text color={'#4A5568'} fontSize={'14px'}>{`${t("profile.updated")} ${formatDistanceToNow(new Date(repo.updated_at), { locale: ptBR })}`}</Text>
                   </HStack>
                 </HStack>
               </Box>

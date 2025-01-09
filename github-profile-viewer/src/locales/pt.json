@@ -8,15 +8,16 @@
     "invalidUsername": "O nome de usuário contém caracteres inválidos"
   },
   "profile": {
-    "repositories": "Repositórios",
     "noMoreRepos": "Você atingiu o final da lista.",
     "visitTwitter": "Visitar Twitter",
-    "updated": "Atualizado",
+    "updated": "Atualizado há",
     "followers": "seguidores",
     "following": "seguindo",
     "location": "Localização",
     "company": "Empresa",
     "email": "Email",
-    "blog": "Blog"
+    "blog": "Blog",
+    "noDescription": "Nenhuma descrição, site ou tópicos fornecidos.",
+    "contact": "Contato"
   }
 }
