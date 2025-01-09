@@ -3,5 +3,8 @@
   "label.search": "Search",
   "placeholder.search": "Enter username",
   "button.search": "Search",
-  "error.emptyField": "Please fill the field"
+  "error": {
+    "emptyField": "Please enter a GitHub username",
+    "invalidUsername": "Username contains invalid characters"
+  }
 }

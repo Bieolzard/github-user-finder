@@ -3,5 +3,8 @@
   "label.search": "Buscar",
   "placeholder.search": "Digite o nome de usuário",
   "button.search": "Buscar",
-  "error.emptyField": "Por favor, preencha o campo"
+  "error": {
+    "emptyField": "Por favor, insira um nome de usuário do GitHub",
+    "invalidUsername": "O nome de usuário contém caracteres inválidos"
+  }
 }

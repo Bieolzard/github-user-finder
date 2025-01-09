@@ -13,11 +13,15 @@ const Home = () => {
     const { t } = useTranslation(); // Hook para acessar traduções
 
     const handleSearch = () => {
-        if (username) {
-            setError(null);
-            navigate(`/profile/${username}`);
-        } else {
+        const userNameRegex = /^[a-zA-Z0-9-_]+$/;
+
+        if (!username) {
             setError(t("error.emptyField"));
+        } else if (!userNameRegex.test(username)){
+            setError(t("error.invalidUsername"));
+        } else {
+            setError(null);
+            navigate(`/profile/${username}`)
         }
     };
 
