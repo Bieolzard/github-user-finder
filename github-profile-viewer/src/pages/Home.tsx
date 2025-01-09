@@ -4,19 +4,20 @@ import { Box, Button, Text, Image, Input } from '@chakra-ui/react';
 import { LuSearch } from 'react-icons/lu';
 import logo from '../assets/logo.png';
 import { InputGroup } from "../components/ui/input-group"
+import { useTranslation } from 'react-i18next'; // Importa o hook
 
 const Home = () => {
     const [username, setUsername] = useState('');
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
+    const { t } = useTranslation(); // Hook para acessar traduções
 
-    // Função para tratar a busca do usuário
     const handleSearch = () => {
         if (username) {
             setError(null);
             navigate(`/profile/${username}`);
         } else {
-            setError("Please enter a GitHub username");
+            setError(t("error.emptyField"));
         }
     };
 
@@ -28,13 +29,13 @@ const Home = () => {
             justifyContent="center"
             backgroundColor="#FFF"
             minHeight="100vh"
-            padding={{ base: '20px', md: '40px' }} // Responsividade no padding
+            padding={{ base: '20px', md: '40px' }}
         >
             {/* Logo responsivo */}
             <Image
                 src={logo}
-                alt="SearchFor DEVs"
-                mb={6} // Margin bottom
+                alt={t("alt.logo")}
+                mb={6}
             />
 
             {/* Input de pesquisa */}
@@ -45,7 +46,7 @@ const Home = () => {
                 width="100%"
             >
                 <Box
-                    display={{ base: 'flex', md: 'none' }} // Exibe no mobile
+                    display={{ base: 'flex', md: 'none' }}
                     width="100%"
                     position="relative"
                     marginBottom="20px"
@@ -58,9 +59,8 @@ const Home = () => {
                         marginTop: '15px',
                         marginLeft: 'auto',
                         marginRight: 'auto',
-                        width: '80%' // Ajuste a largura conforme necessário
+                        width: '80%'
                     }}>
-
                         <label
                             htmlFor="mobile-search"
                             style={{
@@ -74,7 +74,7 @@ const Home = () => {
                                 fontSize: '14px',
                             }}
                         >
-                            Label
+                            {t("label.search")}
                         </label>
                         <div style={{
                             position: 'absolute',
@@ -90,12 +90,12 @@ const Home = () => {
                         <input
                             type="text"
                             id="mobile-search"
-                            placeholder="Search"
+                            placeholder={t("placeholder.search")}
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             style={{
                                 fontSize: '16px',
-                                padding: '12px 16px 12px 36px', // Espaço extra à esquerda para a lupa
+                                padding: '12px 16px 12px 36px',
                                 border: '1px solid #1C1B1F',
                                 borderRadius: '4px',
                                 marginBottom: '10px',
@@ -109,14 +109,13 @@ const Home = () => {
                 </Box>
 
                 <Box
-                    display={{ base: 'none', md: 'flex' }} // Exibe no desktop
+                    display={{ base: 'none', md: 'flex' }}
                     justifyContent="center"
                     alignItems="center"
                 >
-                    {/* Input Chakra UI para desktop */}
                     <InputGroup startElement={<LuSearch />} width="592px">
                         <Input
-                            placeholder="Search"
+                            placeholder={t("placeholder.search")}
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             borderRadius="6px"
@@ -133,24 +132,22 @@ const Home = () => {
                     </InputGroup>
                 </Box>
 
-                {/* Botão de pesquisa */}
                 <Button
                     backgroundColor="#8C19D2"
                     color="white"
                     onClick={handleSearch}
                     paddingBlock="10px"
                     paddingInline="57.5px"
-                    marginStart={{ base: '0', sm: '32px' }} // Responsividade na margem
-                    width={{ base: '100%', md: 'auto' }} // Responsividade no botão
-                    display={{ base: 'none', md: 'inline-flex' }} // Esconde o botão em mobile
+                    marginStart={{ base: '0', sm: '32px' }}
+                    width={{ base: '100%', md: 'auto' }}
+                    display={{ base: 'none', md: 'inline-flex' }}
                 >
-                    Search
+                    {t("button.search")}
                 </Button>
-
             </Box>
 
             {error && <Text color="red.500" mt={3}>{error}</Text>}
-        </Box >
+        </Box>
     );
 };
 
