@@ -5,7 +5,9 @@
   "button.search": "Buscar",
   "error": {
     "emptyField": "Por favor, insira um nome de usuário do GitHub",
-    "invalidUsername": "O nome de usuário contém caracteres inválidos"
+    "invalidUsername": "O nome de usuário contém caracteres inválidos",
+    "userNotFound": "Não há usuários com esse nome",
+    "fetchError": "Erro ao carregar dados"
   },
   "profile": {
     "noMoreRepos": "Você atingiu o final da lista.",

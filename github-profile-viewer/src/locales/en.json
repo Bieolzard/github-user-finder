@@ -4,8 +4,10 @@
   "placeholder.search": "Enter username",
   "button.search": "Search",
   "error": {
-    "emptyField": "Please enter a GitHub username",
-    "invalidUsername": "Username contains invalid characters"
+    "emptyField": "Please enter a username",
+    "invalidUsername": "Invalid username format",
+    "userNotFound": "No users found with this name",
+    "fetchError": "There was an error fetching the data"
   },
   "profile": {
     "noMoreRepos": "You have reached the end of the list.",
