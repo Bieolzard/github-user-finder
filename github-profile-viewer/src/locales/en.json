@@ -6,5 +6,18 @@
   "error": {
     "emptyField": "Please enter a GitHub username",
     "invalidUsername": "Username contains invalid characters"
+  },
+  "profile": {
+    "noMoreRepos": "You have reached the end of the list.",
+    "visitTwitter": "Visit Twitter",
+    "updated": "Updated at",
+    "followers": "Followers",
+    "following": "Following",
+    "location": "Location",
+    "company": "Company",
+    "email": "Email",
+    "blog": "Blog",
+    "noDescription": "No description, website, or topics provided.",
+    "contact": "Contact"
   }
 }

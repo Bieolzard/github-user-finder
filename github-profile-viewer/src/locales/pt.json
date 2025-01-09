@@ -6,5 +6,18 @@
   "error": {
     "emptyField": "Por favor, insira um nome de usuário do GitHub",
     "invalidUsername": "O nome de usuário contém caracteres inválidos"
+  },
+  "profile": {
+    "noMoreRepos": "Você atingiu o final da lista.",
+    "visitTwitter": "Visitar Twitter",
+    "updated": "Atualizado há",
+    "followers": "seguidores",
+    "following": "seguindo",
+    "location": "Localização",
+    "company": "Empresa",
+    "email": "Email",
+    "blog": "Blog",
+    "noDescription": "Nenhuma descrição, site ou tópicos fornecidos.",
+    "contact": "Contato"
   }
 }
