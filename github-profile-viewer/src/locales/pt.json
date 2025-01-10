@@ -21,6 +21,7 @@
     "email": "Email",
     "blog": "Blog",
     "noDescription": "Nenhuma descrição, site ou tópicos fornecidos.",
-    "contact": "Contato"
+    "contact": "Contato",
+    "emailNotAvailable": "Nenhum email disponível"
   }
 }
