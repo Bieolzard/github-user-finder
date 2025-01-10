@@ -4,16 +4,21 @@ import { Box, Button, Image, Input, Spinner, Text } from '@chakra-ui/react';
 import { LuSearch } from 'react-icons/lu';
 import logo from '../assets/logo.png';
 import { InputGroup } from "../components/ui/input-group";
-import { useTranslation } from 'react-i18next'; // Importa o hook
-import axiosInstance from '../axiosInstance'; // Instância do axios
+import { useTranslation } from 'react-i18next';
+import axiosInstance from '../axiosInstance';
 import axios from 'axios';
+import { motion } from 'framer-motion'; // Importando motion do framer-motion
+
+const MotionImage = motion(Image); // Adicionando animação à imagem
+const MotionButton = motion(Button); // Adicionando animação ao botão
+const MotionBox = motion(Box); // Adicionando animação ao Box
 
 const Home = () => {
     const [username, setUsername] = useState('');
-    const [loading, setLoading] = useState(false); // Estado de carregamento
-    const [error, setError] = useState<string | null>(null); // Estado para o erro
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
-    const { t } = useTranslation(); // Hook para acessar traduções
+    const { t } = useTranslation();
 
     const handleSearch = async () => {
         const userNameRegex = /^[a-zA-Z0-9-_]+$/;
@@ -23,48 +28,39 @@ const Home = () => {
         } else if (!userNameRegex.test(username)) {
             setError(t("error.invalidUsername"));
         } else {
-            setLoading(true); // Ativa o carregamento
+            setLoading(true);
 
             try {
-                // Requisição à API do GitHub para verificar se o usuário existe
                 const response = await axiosInstance.get(`/users/${username}`);
 
                 if (response.status === 200) {
-                    // Usuário encontrado, agora verificamos se ele tem repositórios
                     const repoResponse = await axiosInstance.get(`/users/${username}/repos`);
 
-                    // Se o usuário não tiver repositórios
                     if (repoResponse.data.length === 0) {
-                        setError(t("error.noRepos")); // Mensagem para usuário sem repositórios
+                        setError(t("error.noRepos"));
                         setLoading(false);
                         return;
                     }
 
-                    // Se o usuário tem repositórios, navega para a página de perfil
                     navigate(`/profile/${username}`);
                 } else {
-                    // Em caso de erro inesperado
                     setError(t("error.userNotFound"));
                 }
             } catch (error: unknown) {
                 if (axios.isAxiosError(error)) {
                     if (error.response?.status === 404) {
-                        // Exibe erro de usuário não encontrado
                         setError(t("error.userNotFound"));
                     } else {
-                        // Exibe erro genérico de falha na requisição
                         setError(t("error.fetchError"));
                     }
                 } else {
-                    // Exibe erro genérico de falha na requisição
                     setError(t("error.fetchError"));
                 }
             } finally {
-                setLoading(false); // Desativa o carregamento
+                setLoading(false);
             }
         }
     };
-
 
     return (
         <Box
@@ -76,27 +72,27 @@ const Home = () => {
             minHeight="100vh"
             padding={{ base: '20px', md: '40px' }}
         >
-            {/* Logo responsivo */}
-            <Image
+            {/* Logo com animação de fade-in */}
+            <MotionImage
                 src={logo}
                 alt={t("alt.logo")}
                 mb={6}
+                initial={{ opacity: 0 }} // Inicializa com opacidade 0
+                animate={{ opacity: 1 }} // Anima para opacidade 1
+                transition={{ duration: 0.8 }} // Transição suave
             />
 
-            {/* Input de pesquisa */}
-            <Box
+            {/* Campo de pesquisa com animação de fade-in e escala ao foco */}
+            <MotionBox
                 display="flex"
                 justifyContent="center"
                 mt={{ base: '20px', sm: '40px', md: '56px' }}
                 width="100%"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8 }}
             >
-                <Box
-                    display={{ base: 'flex', md: 'none' }}
-                    width="100%"
-                    position="relative"
-                    marginBottom="20px"
-                >
-                    {/* Input customizado para mobile */}
+                <Box display={{ base: 'flex', md: 'none' }} width="100%" position="relative" marginBottom="20px">
                     <div style={{
                         position: 'relative',
                         display: 'flex',
@@ -153,11 +149,7 @@ const Home = () => {
                     </div>
                 </Box>
 
-                <Box
-                    display={{ base: 'none', md: 'flex' }}
-                    justifyContent="center"
-                    alignItems="center"
-                >
+                <Box display={{ base: 'none', md: 'flex' }} justifyContent="center" alignItems="center">
                     <InputGroup startElement={<LuSearch />} width="592px">
                         <Input
                             placeholder={t("placeholder.search")}
@@ -180,7 +172,8 @@ const Home = () => {
                     </InputGroup>
                 </Box>
 
-                <Button
+                {/* Botão de pesquisa com animação de escala */}
+                <MotionButton
                     backgroundColor="#8C19D2"
                     color="white"
                     onClick={handleSearch}
@@ -190,11 +183,18 @@ const Home = () => {
                     width={{ base: '100%', md: 'auto' }}
                     display={{ base: 'none', md: 'inline-flex' }}
                     _hover={{ backgroundColor: "#7A14C2", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}
-                    transition="all 0.3s ease-in-out"
+                    transition={{
+                        duration: 0.8,
+                        type: "spring",
+                        damping: 25,
+                        stiffness: 100
+                    }}
+                    whileHover={{ scale: 1.1 }} // Efeito de aumento ao passar o mouse
+                    whileTap={{ scale: 0.95 }} // Efeito de contração ao clicar
                 >
                     {t("button.search")}
-                </Button>
-            </Box>
+                </MotionButton>
+            </MotionBox>
 
             {/* Exibição do estado de carregamento */}
             {loading && (
@@ -213,7 +213,7 @@ const Home = () => {
                     left="0"
                     right="0"
                     bottom="0"
-                    backgroundColor="rgba(0, 0, 0, 0.5)" // Fundo escurecido
+                    backgroundColor="rgba(0, 0, 0, 0.5)"
                     zIndex={999}
                 >
                     <Box

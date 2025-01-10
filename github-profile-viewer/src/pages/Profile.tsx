@@ -118,16 +118,13 @@ const Profile = () => {
 
 
   useEffect(() => {
-    if (username) {
-      setUserData(null);
-      setRepos([]);
-      setError(null);
-      setPage(1);
-      setHasMore(true);
-      setLoading(true);
-      fetchData(1);
-    }
-  }, [username]);
+  if (username) {
+    setLoading(true);
+    setError(null); // Resetar erro
+    fetchData(1); // Executar a função de busca apenas quando o username mudar
+  }
+}, [username]); // Adicionar 'username' como dependência para evitar loop desnecessário
+
 
   const fetchMoreRepos = () => {
     if (!loading && hasMore) {

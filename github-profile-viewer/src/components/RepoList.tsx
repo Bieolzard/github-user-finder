@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { z } from 'zod';
-import { Text } from '@chakra-ui/react';
+import { Text, Box, Spinner } from '@chakra-ui/react';
+import { motion } from 'framer-motion'; // Importando o motion
 
 interface RepoListProps {
   username: string;
@@ -41,26 +42,29 @@ const RepoList: React.FC<RepoListProps> = ({ username, setRepos }) => {
   }, [sortOption, direction]);
 
   return (
-    <div style={{ padding: '16px', backgroundColor: '#fff' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Text color={'black'}>Ordenar por:</Text>
-        <div style={{ position: 'relative', display: 'inline-block' }}>
+    <Box padding="16px" backgroundColor="#fff">
+      <Box display="flex" flexDirection={['column', 'row']} alignItems="center" gap="8px">
+        <Text color="black" marginBottom={['8px', '0']}>Ordenar por:</Text>
+
+        {/* Envolvendo o select nativo com motion.div */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           <select
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
             style={{
-              appearance: 'none',
-              background: 'transparent',
-              border: 'none',
               padding: '8px',
-              borderRadius: '4px',
-              boxShadow: 'none',
-              cursor: 'pointer',
-              color: 'black',
-              fontFamily: 'Arial, sans-serif',
               fontSize: '16px',
-              paddingRight: '20px',
-              outline: 'none', // Remove a borda ao selecionar o input
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+              background: 'transparent',
+              color: 'black',
+              cursor: 'pointer',
+              width: '100%', // Responsividade: ocupa 100% da largura em telas pequenas
+              maxWidth: '200px', // Limita a largura máxima para telas maiores
             }}
           >
             <option value="created">Data de criação</option>
@@ -68,64 +72,42 @@ const RepoList: React.FC<RepoListProps> = ({ username, setRepos }) => {
             <option value="pushed">Recentemente enviado</option>
             <option value="full_name">Nome</option>
           </select>
-          <div style={{ position: 'absolute', top: '50%', right: '2px', pointerEvents: 'none', transform: 'translateY(-50%)' }}>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#1E90FF"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="feather feather-chevron-down"
-            >
-              <path d="M6 9l6 6 6-6"></path>
-            </svg>
-          </div>
-        </div>
+        </motion.div>
 
-        <div style={{ position: 'relative', display: 'inline-block' }}>
+        {/* Seletor de direção */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
           <select
             value={direction}
             onChange={(e) => setDirection(e.target.value)}
             style={{
-              appearance: 'none',
-              background: 'transparent',
-              border: 'none',
               padding: '8px',
-              borderRadius: '4px',
-              boxShadow: 'none',
-              cursor: 'pointer',
-              color: 'black',
-              fontFamily: 'Arial, sans-serif',
               fontSize: '16px',
-              paddingRight: '20px',
-              outline: 'none', // Remove a borda ao selecionar o input
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+              background: 'transparent',
+              color: 'black',
+              cursor: 'pointer',
+              width: '100%', // Responsividade: ocupa 100% da largura em telas pequenas
+              maxWidth: '200px', // Limita a largura máxima para telas maiores
             }}
           >
             <option value="asc">Ordem Crescente</option>
             <option value="desc">Ordem Decrescente</option>
           </select>
-          <div style={{ position: 'absolute', top: '50%', right: '2px', pointerEvents: 'none', transform: 'translateY(-50%)' }}>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#1E90FF"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="feather feather-chevron-down"
-            >
-              <path d="M6 9l6 6 6-6"></path>
-            </svg>
-          </div>
-        </div>
-      </div>
-      {loading && <div>Carregando...</div>}
-    </div>
+        </motion.div>
+      </Box>
+
+      {/* Exibindo o estado de carregamento */}
+      {loading && (
+        <Box display="flex" justifyContent="center" mt={4}>
+          <Spinner size="xl" color="purple.500" />
+        </Box>
+      )}
+    </Box>
   );
 };
 

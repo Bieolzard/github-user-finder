@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { HStack, Input, Box, Text, Spinner,  } from '@chakra-ui/react';
+import { HStack, Input, Box, Text, Spinner } from '@chakra-ui/react';
 import { InputGroup } from "../components/ui/input-group";
 import { useNavigate } from 'react-router-dom';
 import { LuSearch } from 'react-icons/lu'; // Ícone de busca
 import axios from 'axios';
+import { motion } from 'framer-motion'; // Importando o motion
 
 // Definir o tipo para o usuário retornado pela API
 interface GitHubUser {
@@ -61,7 +62,10 @@ const SearchBar = () => {
                         borderColor="#E2E8F0"
                         borderWidth="1px"
                         transition="all 0.3s ease-in-out"
-                        _hover={{ borderColor: "#8C19D2", boxShadow: "0px 4px 8px #8C19D2(0, 0, 0, 0.1)" }}
+                        _hover={{
+                            borderColor: "#8C19D2",
+                            boxShadow: "0px 4px 8px #8C19D2(0, 0, 0, 0.1)"
+                        }}
                         _focus={{
                             borderColor: "#8C19D2",
                             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
@@ -71,21 +75,44 @@ const SearchBar = () => {
                 </InputGroup>
             </HStack>
 
-            {loading && <Spinner size="lg" mt={4} />}
-            {!loading && userResults.length > 0 && (
-                <Box width="590px" mt={4} bg="white" border="1px solid #8C19D2" borderRadius="md" boxShadow="sm">
-                    {userResults.map((user) => (
-                        <Box color={'black'}
-                            key={user.id}
-                            p={2}
-                            _hover={{ backgroundColor: "#F0F0F0", cursor: "pointer" }}
-                            onClick={() => handleSelectUser(user.login)}
-                        >
-                            {user.login}
-                        </Box>
-                    ))}
-                </Box>
+            {loading && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <Spinner size="lg" mt={4} />
+                </motion.div>
             )}
+
+            {!loading && userResults.length > 0 && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <Box width="590px" mt={4} bg="white" border="1px solid #8C19D2" borderRadius="md" boxShadow="sm">
+                        {userResults.map((user) => (
+                            <motion.div
+                                key={user.id}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                <Box
+                                    color={'black'}
+                                    p={2}
+                                    _hover={{ backgroundColor: "#F0F0F0", cursor: "pointer" }}
+                                    onClick={() => handleSelectUser(user.login)}
+                                >
+                                    {user.login}
+                                </Box>
+                            </motion.div>
+                        ))}
+                    </Box>
+                </motion.div>
+            )}
+
             {!loading && userResults.length === 0 && search && (
                 <Text mt={4} color="gray.500">No users found</Text>
             )}
