@@ -118,12 +118,12 @@ const Profile = () => {
 
 
   useEffect(() => {
-  if (username) {
-    setLoading(true);
-    setError(null); // Resetar erro
-    fetchData(1); // Executar a função de busca apenas quando o username mudar
-  }
-}, [username]); // Adicionar 'username' como dependência para evitar loop desnecessário
+    if (username) {
+      setLoading(true);
+      setError(null); // Resetar erro
+      fetchData(1); // Executar a função de busca apenas quando o username mudar
+    }
+  }, [username]); // Adicionar 'username' como dependência para evitar loop desnecessário
 
 
   const fetchMoreRepos = () => {
@@ -209,159 +209,167 @@ const Profile = () => {
       <Header />
 
       <HStack
-        paddingBlock={'80px'}
-        paddingInline={'112px'}
+        paddingBlock={['0','0','80px']}
+        paddingInline={['0', '0', '112px']}  // Ajustando padding para desktops
         display={'flex'}
-        justifyContent={'flex-start'}  // Ajustando para garantir que as colunas comecem do topo
-        alignItems={'flex-start'}  // Alinha ambas as colunas ao topo
+        justifyContent={'flex-start'}
+        alignItems={'flex-start'}
+        flexDirection={['column', 'column', 'row']}  // Colunas empilhadas em telas pequenas e médias
       >
-        {/* Primeira Coluna */}
+        {/* Primeira Coluna - Informações Pessoais */}
+
         <VStack
           align="flex-start"
-          marginBottom={4}  // Ajusta o espaçamento entre os itens dentro da coluna
+          marginBottom={4}
           borderRadius={'4px'}
-          marginRight={"32px"}
+          marginRight={['0', '0', '32px']}
+          width={['100%', '100%', 'auto']}
+          backgroundColor={['#EADDFF', '#EADDFF', '#FFFFFF']}
+          padding={['16px', '16px', '0']} // Adicionando padding para aplicar fundo corretamente em desktops
         >
-          <HStack align="flex-start" display={'flex'} flexDirection={'column'} backgroundColor={'#FFFFFF'} paddingBlock={'24px'}
-            paddingInline={'16px'}>
+          {/* Foto de perfil, nome e login */}
+          <HStack
+            align="center"
+            display={'flex'}
+            flexDirection={['row', 'row', 'row']}
+            backgroundColor={'inherit'}
+            paddingBlock={'24px'}
+            paddingInline={'16px'}
+            width="100%"
+            gap={4}
+          >
+            <Image
+              src={userData?.avatar_url}
+              alt={userData?.name}
+              borderRadius="full"
+              boxSize={['40px', '48px', '60px']}
+            />
+            <VStack align={['flex-start', 'flex-start', 'flex-start']} marginTop={['16px', '0']} flexDirection={['column', 'column', 'column']} gap={4}>
+              <Text fontSize={['16px', '18px', '20px']} fontWeight="bold" color="black" marginBottom={'4px'}>
+                {userData?.name}
+              </Text>
+              <Text color='#A0AEC0' fontSize={['12px', '14px', '16px']} fontWeight={'normal'}>
+                @{userData?.login}
+              </Text>
+            </VStack>
+          </HStack>
 
-            {/* Div para Imagem, Nome e @username lado a lado */}
-            <HStack gap={4}>
-              {/* Coluna para a Imagem */}
-              <Image
-                src={userData?.avatar_url}
-                alt={userData?.name}
-                borderRadius="full"
-                boxSize="48px"
-              />
+          {/* Seguidores e Seguindo */}
+          <HStack gap={4} marginTop={4}>
+            <Box display={'flex'} justifyContent={'flex-start'} alignItems={'center'}>
+              <FollowersIcon width="24px" height="24px" />
+              <Text fontSize="lg" color="#4A5568" marginLeft={'8px'}>
+                {userData?.followers} {t("profile.followers")}
+              </Text>
+            </Box>
+            <Box display={'flex'} justifyContent={'flex-start'} alignItems={'center'}>
+              <Heart width="24px" height="24px" />
+              <Text fontSize="lg" color="#4A5568" marginLeft={'8px'}>
+                {userData?.following} {t("profile.following")}
+              </Text>
+            </Box>
+          </HStack>
 
-              {/* Coluna para o Nome e o @username */}
-              <VStack align="flex-start" >
-                <Text fontSize="20px" fontWeight="bold" color="black" marginBottom={'4px'}>
-                  {userData?.name}
-                </Text>
-                <Text color='#A0AEC0' fontSize={'14px'} fontWeight={'normal'}>
-                  @{userData?.login}
-                </Text>
-              </VStack>
-            </HStack>
+          {/* Bio */}
+          {userData?.bio && (
+            <Text color="#4A5568" marginBottom={'24px'} maxWidth={'380px'} fontSize={'16px'} marginTop={'16px'}>
+              {userData?.bio}
+            </Text>
+          )}
 
-            {/* Bio */}
-            {userData?.bio && (
-              <Text color="#4A5568" marginBottom={'24px'} maxWidth={'380px'} fontSize={'16px'} marginTop={'16px'}>
-                {userData?.bio}
+          {/* Informações adicionais */}
+          <VStack align="flex-start" marginTop={'24px'}>
+            {userData?.company && (
+              <Box display={'flex'} justifyContent={'flex-start'} alignItems={'center'}>
+                <Company width="24px" height="24px" />
+                <Text color="#4A5568" marginLeft={'8px'}>{userData.company}</Text>
+              </Box>
+            )}
+            {userData?.location && (
+              <Box display={'flex'} justifyContent={'flex-start'} alignItems={'center'}>
+                <Loc width="24px" height="24px" />
+                <Text color="#4A5568" marginLeft={'8px'}>{userData.location}</Text>
+              </Box>
+            )}
+            {userData?.email ? (
+              <Box display={'flex'} justifyContent={'flex-start'} alignItems={'center'}>
+                <Email width="24px" height="24px" />
+                <Text color="#4A5568" marginLeft={'8px'}>{userData.email}</Text>
+              </Box>
+            ) : (
+              <Text color="#A0AEC0" fontStyle="italic">
+                {t("profile.emailNotAvailable")}
               </Text>
             )}
-
-            {/* Informações de seguidores e seguindo */}
-            <HStack>
-              <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} >
-                <FollowersIcon width="24px" height="24px" />
-                <Text fontSize="lg" color="#4A5568" marginLeft={'8px'}>
-                  {userData?.followers} {t("profile.followers")}
-                </Text>
-              </Box>
-            </HStack>
-            <HStack>
-              <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                <Heart width="24px" height="24px" />
-                <Text fontSize="lg" color="#4A5568" marginLeft={'8px'}>
-                  {userData?.following} {t("profile.following")}
-                </Text>
-              </Box>
-            </HStack>
-
-            {/* Informações adicionais */}
-            <VStack align="flex-start" marginTop={'24px'}>
-              {userData?.company &&
-                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                  <Company width="24px" height="24px" />
-                  <Text color="#4A5568" marginLeft={'8px'}>{userData.company}</Text>
-                </Box>}
-              {userData?.location &&
-                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                  <Loc width="24px" height="24px" />
-                  <Text color="#4A5568" marginLeft={'8px'}> {userData.location}</Text>
-                </Box>}
-              {userData?.email ? (
-                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                  <Email width="24px" height="24px" />
-                  <Text color="#4A5568" marginLeft={'8px'}>{userData.email}</Text>
+            {userData?.blog && (
+              <Link href={userData.blog}>
+                <Box display={'flex'} justifyContent={'flex-start'} alignItems={'center'}>
+                  <Site width="24px" height="24px" />
+                  <Button
+                    margin={'0px'}
+                    padding={'0px 0px'}
+                    color={'#4A5568'}
+                    title={userData.blog}
+                    marginLeft={'8px'}
+                    background={'transparent'}
+                  >
+                    {userData.blog}
+                  </Button>
                 </Box>
-              ) : (
-                <Text color="#A0AEC0" fontStyle="italic">
-                  {t("profile.emailNotAvailable")}
-                </Text>
-              )}
-              {userData?.blog && (
-                <Link href={userData.blog} >
-                  <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                    <Site width="24px" height="24px" />
-                    <Button
-                      margin={'0px'}
-                      padding={'0px 0px'}
-                      color={'#4A5568'}
-                      title={userData.blog}
-                      marginLeft={'8px'}
-                    >
-                      {userData.blog}
-                    </Button>
-                  </Box>
-                </Link>
-              )}
-              {userData?.twitter_username && (
-                <Link href={`https://twitter.com/${userData?.twitter_username}`} >
-                  <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-                    <Twitter width="24px" height="24px" />
-                    <Button colorScheme="twitter" color={'#4A5568'} padding={'0px 0px'} marginLeft={'8px'}>
-                      {userData.twitter_username}
-                    </Button>
-                  </Box>
-                </Link>
-              )}
-            </VStack>
+              </Link>
+            )}
+            {userData?.twitter_username && (
+              <Link href={`https://twitter.com/${userData?.twitter_username}`}>
+                <Box display={'flex'} justifyContent={'flex-start'} alignItems={'center'}>
+                  <Twitter width="24px" height="24px" />
+                  <Button colorScheme="twitter" color={'#4A5568'} padding={'0px 0px'} marginLeft={'8px'}>
+                    {userData.twitter_username}
+                  </Button>
+                </Box>
+              </Link>
+            )}
+          </VStack>
 
-          </HStack>
-         {/* Botão de Contato */}
-<Button
-  color={'white'}
-  backgroundColor={'#8C19D2'}
-  _hover={{
-    backgroundColor: "#7A14C2",
-    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-  }}
-  transition="all 0.3s ease-in-out"
-  width="full"
-  marginTop={4}
-  onClick={() => {
-    if (userData?.email) {
-      window.location.href = `mailto:${userData.email}`;
-    } else if (userData?.twitter_username) {
-      window.location.href = `https://twitter.com/${userData.twitter_username}`;
-    } else if (userData?.blog) {
-      window.location.href = userData.blog;
-    }
-  }}
->
-  {t("profile.contact")}
-</Button>
-
-
-
+          {/* Botão de Contato */}
+          <Button
+            display={['none', 'none', 'block']} // Botão visível apenas em desktop
+            color={'white'}
+            backgroundColor={'#8C19D2'}
+            _hover={{
+              backgroundColor: "#7A14C2",
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+            }}
+            transition="all 0.3s ease-in-out"
+            width="full"
+            marginTop={4}
+            onClick={() => {
+              if (userData?.email) {
+                window.location.href = `mailto:${userData.email}`;
+              } else if (userData?.twitter_username) {
+                window.location.href = `https://twitter.com/${userData.twitter_username}`;
+              } else if (userData?.blog) {
+                window.location.href = userData.blog;
+              }
+            }}
+          >
+            {t("profile.contact")}
+          </Button>
         </VStack>
 
-        {/* Segunda Coluna (Repositórios) */}
+        {/* Segunda Coluna - Repositórios */}
         <VStack
           id="scrollable"
           align="flex-start"
           flex="1"
-          maxHeight="calc(100vh - 80px)" // Altura dinâmica
-          overflow="auto" // Scroll gerenciado aqui
+          maxHeight="calc(100vh - 80px)"
+          overflow="auto"
           backgroundColor={'#FFFFFF'}
           borderRadius={'4px'}
-          padding={'24px'}
-          className="scrollable" // Aplicando a classe CSS
+          padding={['0', '0', '24px']} // Ajustando padding para desktops
+          className="scrollable"
           maxWidth={'856px'}
+          width="100%"
+          marginTop={['24px', '0']}
         >
           {username && <RepoList username={username} setRepos={setRepos} />}
           <InfiniteScroll
@@ -369,7 +377,7 @@ const Profile = () => {
             next={fetchMoreRepos}
             hasMore={hasMore}
             loader={<Spinner size="xl" />}
-            scrollableTarget="scrollable" // Indica que o scroll deve ser gerenciado pelo `VStack`
+            scrollableTarget="scrollable"
             endMessage={<Text color="black">{t("profile.noMoreRepos")}</Text>}
           >
             {repos.map((repo, index) => (
@@ -397,7 +405,6 @@ const Profile = () => {
                       <StarIcon width="24px" height="24px" color="#F6AD55" />
                       <Text color={'#4A5568'} fontSize={'14px'}>{repo.stargazers_count}</Text>
                     </HStack>
-                    {/* Separador */}
                     <Text color={'#4A5568'} fontSize={'14px'}>•</Text>
                     <HStack>
                       <Text color={'#4A5568'} fontSize={'14px'}>{`${t("profile.updated")} ${formatDistanceToNow(new Date(repo.updated_at), { locale: ptBR })}`}</Text>
@@ -411,7 +418,9 @@ const Profile = () => {
         </VStack>
       </HStack>
     </Box>
-  );
+);
+
+
 };
 
 export default Profile;
