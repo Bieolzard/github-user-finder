@@ -2,9 +2,9 @@ body, html {
 }
 
 .scrollable {
-  overflow-y: auto; /* Ativa o scroll apenas no contêiner certo */
-  scrollbar-width: thin; /* Estiliza para navegadores como Firefox */
-  scrollbar-color: transparent transparent; /* Firefox: Transparente */
+  overflow-y: auto; 
+  scrollbar-width: thin; 
+  scrollbar-color: transparent transparent; 
 }
 
 .scrollable::-webkit-scrollbar {
@@ -17,11 +17,11 @@ body, html {
 }
 
 .scrollable::-webkit-scrollbar-track {
-  background: transparent; /* Cor do fundo */
+  background: transparent;
 }
 
 .infinite-scroll-component {
-  overflow: visible !important; /* Impede barras de rolagem internas */
+  overflow: visible !important; 
 }
 
 .custom-select {

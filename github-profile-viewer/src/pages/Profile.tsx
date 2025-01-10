@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Button, Text, Image, Link, Spinner, HStack, VStack, Separator } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import axiosInstance from '../axiosInstance'; // Importa a instância
+import axiosInstance from '../axiosInstance';
 import { z } from 'zod';
 import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';  // Importando a localidade em português
-import InfiniteScroll from 'react-infinite-scroll-component'; // Importando o Infinite Scroll
-import Header from '../components/Header'; // Importando o Header
-import RepoList from '../components/RepoList.js'; // Importando o Header
+import { ptBR } from 'date-fns/locale';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import Header from '../components/Header';
+import RepoList from '../components/RepoList.js';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-expect-error    
 import FollowersIcon from '../icons/followers';
@@ -34,8 +34,6 @@ import Email from '../icons/email'
 //@ts-expect-error 
 import StarIcon from '../icons/star.jsx'
 
-
-// Defina o modelo Zod para o usuário e os repositórios
 const userSchema = z.object({
   login: z.string(),
   avatar_url: z.string(),
@@ -53,7 +51,7 @@ const userSchema = z.object({
 const repoSchema = z.object({
   name: z.string(),
   html_url: z.string(),
-  stargazers_count: z.number(),  // Mudado para o campo correto
+  stargazers_count: z.number(),
   updated_at: z.string(),
   description: z.string().nullable().optional(),
 });
@@ -71,67 +69,60 @@ const Profile = () => {
   const [hasMore, setHasMore] = useState(true);
   const { t } = useTranslation();
 
-  // Função para buscar os dados do usuário e repositórios
-  // Função para buscar os dados do usuário e repositórios
   const fetchData = async (page: number) => {
     try {
       setLoading(true);
       const userResponse = await axiosInstance.get(`/users/${username}`);
 
-      // Verificar se o usuário realmente existe (erro 404)
       if (userResponse.status === 404) {
         setError(t("error.userNotFound"));
         setLoading(false);
-        return; // Parar a execução se o usuário não for encontrado
+        return;
       }
 
       const repoResponse = await axiosInstance.get(`/users/${username}/repos?per_page=10&page=${page}`);
-
-      // Validação com Zod
       const userValidated = userSchema.parse(userResponse.data);
       const reposValidated = repoResponse.data.map((repo: unknown) => repoSchema.parse(repo));
 
       if (!userValidated.email) {
         console.warn("E-mail não disponível para o usuário:", username);
       }
-
       setUserData(userValidated);
       setRepos((prevRepos) => {
         const newRepos = [...prevRepos, ...reposValidated];
-        return Array.from(new Set(newRepos.map(repo => repo.name)))  // Garantindo que o nome do repositório seja único
-          .map(name => newRepos.find(repo => repo.name === name));  // Extrai os objetos únicos baseados no nome
+        return Array.from(new Set(newRepos.map(repo => repo.name)))
+          .map(name => newRepos.find(repo => repo.name === name));
       });
       setLoading(false);
 
       if (reposValidated.length < 10) {
         setHasMore(false);
       } else {
-        setHasMore(true); // Garantir que a flag continue verdadeira se ainda houver mais repositórios
+        setHasMore(true);
       }
 
     } catch (err) {
       console.error(err);
-      setError(t("Usuário não possui repositórios publicados até o momento")); // Tratamento para erro genérico
+      setError(t("Usuário não possui repositórios publicados até o momento"));
       setLoading(false);
     }
   };
 
-
   useEffect(() => {
     if (username) {
       setLoading(true);
-      setError(null); // Resetar erro
-      fetchData(1); // Executar a função de busca apenas quando o username mudar
+      setError(null);
+      fetchData(1);
     }
-  }, [username]); // Adicionar 'username' como dependência para evitar loop desnecessário
+  }, [username]);
 
 
   const fetchMoreRepos = () => {
     if (!loading && hasMore) {
       setPage((prevPage) => {
         const nextPage = prevPage + 1;
-        fetchData(nextPage); // Chama a função para buscar os repositórios da próxima página
-        return nextPage;  // Atualiza o estado da página
+        fetchData(nextPage);
+        return nextPage;
       });
     }
   };
@@ -189,7 +180,7 @@ const Profile = () => {
                   {error}
                 </Text>
                 <Button
-                  onClick={() => setError(null)} // Fechar a mensagem de erro
+                  onClick={() => setError(null)}
                   backgroundColor="transparent"
                   border="none"
                   color="white"
@@ -209,14 +200,13 @@ const Profile = () => {
       <Header />
 
       <HStack
-        paddingBlock={['0','0','80px']}
-        paddingInline={['0', '0', '112px']}  // Ajustando padding para desktops
+        paddingBlock={['0', '0', '80px']}
+        paddingInline={['0', '0', '112px']}
         display={'flex'}
         justifyContent={'flex-start'}
         alignItems={'flex-start'}
-        flexDirection={['column', 'column', 'row']}  // Colunas empilhadas em telas pequenas e médias
+        flexDirection={['column', 'column', 'row']}
       >
-        {/* Primeira Coluna - Informações Pessoais */}
 
         <VStack
           align="flex-start"
@@ -225,9 +215,9 @@ const Profile = () => {
           marginRight={['0', '0', '32px']}
           width={['100%', '100%', 'auto']}
           backgroundColor={['#EADDFF', '#EADDFF', '#FFFFFF']}
-          padding={['16px', '16px', '0']} // Adicionando padding para aplicar fundo corretamente em desktops
+          padding={['16px', '16px', '0']}
         >
-          {/* Foto de perfil, nome e login */}
+
           <HStack
             align="center"
             display={'flex'}
@@ -254,7 +244,6 @@ const Profile = () => {
             </VStack>
           </HStack>
 
-          {/* Seguidores e Seguindo */}
           <HStack gap={4} marginTop={4}>
             <Box display={'flex'} justifyContent={'flex-start'} alignItems={'center'}>
               <FollowersIcon width="24px" height="24px" />
@@ -270,14 +259,12 @@ const Profile = () => {
             </Box>
           </HStack>
 
-          {/* Bio */}
           {userData?.bio && (
             <Text color="#4A5568" marginBottom={'24px'} maxWidth={'380px'} fontSize={'16px'} marginTop={'16px'}>
               {userData?.bio}
             </Text>
           )}
 
-          {/* Informações adicionais */}
           <VStack align="flex-start" marginTop={'24px'}>
             {userData?.company && (
               <Box display={'flex'} justifyContent={'flex-start'} alignItems={'center'}>
@@ -330,7 +317,6 @@ const Profile = () => {
             )}
           </VStack>
 
-          {/* Botão de Contato */}
           <Button
             display={['none', 'none', 'block']} // Botão visível apenas em desktop
             color={'white'}
@@ -354,9 +340,9 @@ const Profile = () => {
           >
             {t("profile.contact")}
           </Button>
+
         </VStack>
 
-        {/* Segunda Coluna - Repositórios */}
         <VStack
           id="scrollable"
           align="flex-start"
@@ -365,7 +351,7 @@ const Profile = () => {
           overflow="auto"
           backgroundColor={'#FFFFFF'}
           borderRadius={'4px'}
-          padding={['0', '0', '24px']} // Ajustando padding para desktops
+          padding={['0', '0', '24px']}
           className="scrollable"
           maxWidth={'856px'}
           width="100%"
@@ -418,8 +404,7 @@ const Profile = () => {
         </VStack>
       </HStack>
     </Box>
-);
-
+  );
 
 };
 

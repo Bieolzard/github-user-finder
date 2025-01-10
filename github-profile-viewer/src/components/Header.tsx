@@ -1,13 +1,12 @@
-import React from 'react';
 import { Box, HStack, Image } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
-import SearchBar from './SearchBar'; // Importando o componente de busca
+import SearchBar from './SearchBar';
 import logoProfile from '../assets/logoProfile.png';
-import { useTranslation } from 'react-i18next'; // Importa o hook
-import { motion } from 'framer-motion'; // Importando o motion
+import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 
 const Header = () => {
-    const { t } = useTranslation(); // Hook para acessar traduções
+    const { t } = useTranslation();
 
     return (
         <motion.div
@@ -20,7 +19,7 @@ const Header = () => {
                 bg="white"
                 borderBottom="1px"
                 borderColor="gray.200"
-                display={['none', 'none', 'none', 'flex']} // Esconde em celulares, tablets pequenos e médios, mas exibe a partir de telas grandes
+                display={['none', 'none', 'none', 'flex']}
             >
                 <HStack justify="space-between" align="center" width="full" justifyContent={'center'}>
                     <Link to="/">
@@ -38,7 +37,6 @@ const Header = () => {
                         </motion.div>
                     </Link>
 
-                    {/* Barra de pesquisa */}
                     <SearchBar />
                 </HStack>
             </Box>

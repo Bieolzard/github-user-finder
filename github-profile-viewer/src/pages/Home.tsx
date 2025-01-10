@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, Image, Input, Spinner, Text } from '@chakra-ui/react';
 import { LuSearch } from 'react-icons/lu';
@@ -7,11 +7,11 @@ import { InputGroup } from "../components/ui/input-group";
 import { useTranslation } from 'react-i18next';
 import axiosInstance from '../axiosInstance';
 import axios from 'axios';
-import { motion } from 'framer-motion'; // Importando motion do framer-motion
+import { motion } from 'framer-motion';
 
-const MotionImage = motion(Image); // Adicionando animação à imagem
-const MotionButton = motion(Button); // Adicionando animação ao botão
-const MotionBox = motion(Box); // Adicionando animação ao Box
+const MotionImage = motion(Image);
+const MotionButton = motion(Button);
+const MotionBox = motion(Box);
 
 const Home = () => {
     const [username, setUsername] = useState('');
@@ -78,11 +78,10 @@ const Home = () => {
                 alt={t("alt.logo")}
                 mb={6}
                 initial={{ opacity: 0 }} // Inicializa com opacidade 0
-                animate={{ opacity: 1 }} // Anima para opacidade 1
-                transition={{ duration: 0.8 }} // Transição suave
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8 }}
             />
 
-            {/* Campo de pesquisa com animação de fade-in e escala ao foco */}
             <MotionBox
                 display="flex"
                 justifyContent="center"
@@ -172,7 +171,6 @@ const Home = () => {
                     </InputGroup>
                 </Box>
 
-                {/* Botão de pesquisa com animação de escala */}
                 <MotionButton
                     backgroundColor="#8C19D2"
                     color="white"
@@ -189,14 +187,13 @@ const Home = () => {
                         damping: 25,
                         stiffness: 100
                     }}
-                    whileHover={{ scale: 1.1 }} // Efeito de aumento ao passar o mouse
-                    whileTap={{ scale: 0.95 }} // Efeito de contração ao clicar
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                 >
                     {t("button.search")}
                 </MotionButton>
             </MotionBox>
 
-            {/* Exibição do estado de carregamento */}
             {loading && (
                 <Box display="flex" justifyContent="center" mt={6}>
                     <Spinner size="xl" color="purple.500" />
@@ -231,7 +228,7 @@ const Home = () => {
                             {error}
                         </Text>
                         <Button
-                            onClick={() => setError(null)} // Fechar a mensagem de erro
+                            onClick={() => setError(null)}
                             backgroundColor="transparent"
                             border="none"
                             color={error === t("error.noRepos") ? "black" : "white"}

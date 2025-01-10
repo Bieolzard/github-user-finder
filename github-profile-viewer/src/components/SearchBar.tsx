@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { HStack, Input, Box, Text, Spinner } from '@chakra-ui/react';
 import { InputGroup } from "../components/ui/input-group";
 import { useNavigate } from 'react-router-dom';
-import { LuSearch } from 'react-icons/lu'; // Ícone de busca
+import { LuSearch } from 'react-icons/lu';
 import axios from 'axios';
-import { motion } from 'framer-motion'; // Importando o motion
+import { motion } from 'framer-motion';
 
-// Definir o tipo para o usuário retornado pela API
+
 interface GitHubUser {
     id: number;
     login: string;
@@ -38,7 +38,7 @@ const SearchBar = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
             fetchUsers(search);
-        }, 500); // 500ms de espera após o usuário parar de digitar
+        }, 500);
 
         return () => clearTimeout(timer);
     }, [search]);
