@@ -6,7 +6,6 @@ import { LuSearch } from 'react-icons/lu';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 
-
 interface GitHubUser {
     id: number;
     login: string;
@@ -48,14 +47,25 @@ const SearchBar = () => {
         setSearch('');
     };
 
+    // Função para lidar com pressionamento de tecla
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === 'k' || e.key === 'K') {
+            if (search.trim()) {
+                // Se o campo de pesquisa não estiver vazio, realiza a pesquisa
+                fetchUsers(search);
+            }
+        }
+    };
+
     return (
         <Box width="full" padding={4}>
             <HStack gap={4} width="full">
-                <InputGroup startElement={<LuSearch />} width="590px">
+                <InputGroup startElement={<LuSearch />} width={['100%', '100%', '590px']}>
                     <Input
                         placeholder="Search GitHub User..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
+                        onKeyDown={handleKeyDown} // Adicionando o evento de tecla
                         size="lg"
                         color={'black'}
                         borderRadius="6px"
@@ -91,7 +101,7 @@ const SearchBar = () => {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
                 >
-                    <Box width="590px" mt={4} bg="white" border="1px solid #8C19D2" borderRadius="md" boxShadow="sm">
+                    <Box width={['100%', '100%', '590px']} mt={4} bg="white" border="1px solid #8C19D2" borderRadius="md" boxShadow="sm">
                         {userResults.map((user) => (
                             <motion.div
                                 key={user.id}

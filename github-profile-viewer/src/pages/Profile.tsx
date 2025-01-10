@@ -33,6 +33,8 @@ import Email from '../icons/email'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-expect-error 
 import StarIcon from '../icons/star.jsx'
+import SearchBar from '../components/SearchBar.js';
+import { IoArrowBack } from 'react-icons/io5';
 
 const userSchema = z.object({
   login: z.string(),
@@ -198,6 +200,28 @@ const Profile = () => {
   return (
     <Box backgroundColor={'#FCFCFC'}>
       <Header />
+
+      {/* Seção de Navegação no topo */}
+    <HStack
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      padding={['16px', '16px', '32px']}
+    >
+      {/* Botão "Voltar" (visível em mobile/tablet) */}
+      <Box
+        display={['block', 'block', 'none']}  // Visível em mobile/tablet
+        onClick={() => window.location.href = '/'}
+        cursor="pointer"
+      >
+        <IoArrowBack size={24} color="#4A5568" />
+      </Box>
+
+      {/* Campo de Pesquisa (visível em mobile/tablet) */}
+      <Box display={['block', 'block', 'none']} width="80%">
+        <SearchBar />
+      </Box>
+    </HStack>
 
       <HStack
         paddingBlock={['0', '0', '80px']}
