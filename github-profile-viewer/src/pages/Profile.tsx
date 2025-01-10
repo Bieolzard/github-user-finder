@@ -201,27 +201,24 @@ const Profile = () => {
     <Box backgroundColor={'#FCFCFC'}>
       <Header />
 
-      {/* Seção de Navegação no topo */}
-    <HStack
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
-      padding={['16px', '16px', '32px']}
-    >
-      {/* Botão "Voltar" (visível em mobile/tablet) */}
-      <Box
-        display={['block', 'block', 'none']}  // Visível em mobile/tablet
-        onClick={() => window.location.href = '/'}
-        cursor="pointer"
+      <HStack
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        padding={['16px', '16px', '32px']}
       >
-        <IoArrowBack size={24} color="#4A5568" />
-      </Box>
-
-      {/* Campo de Pesquisa (visível em mobile/tablet) */}
-      <Box display={['block', 'block', 'none']} width="80%">
-        <SearchBar />
-      </Box>
-    </HStack>
+        <Box
+          display={['block', 'block', 'none']}
+          onClick={() => window.location.href = '/'}
+          cursor="pointer"
+        >
+          <IoArrowBack size={24} color="#4A5568" />
+        </Box>
+        
+        <Box display={['block', 'block', 'none']} width="80%">
+          <SearchBar />
+        </Box>
+      </HStack>
 
       <HStack
         paddingBlock={['0', '0', '80px']}

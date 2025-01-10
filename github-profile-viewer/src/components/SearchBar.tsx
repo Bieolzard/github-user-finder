@@ -47,11 +47,10 @@ const SearchBar = () => {
         setSearch('');
     };
 
-    // Função para lidar com pressionamento de tecla
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' || e.key === 'k' || e.key === 'K') {
             if (search.trim()) {
-                // Se o campo de pesquisa não estiver vazio, realiza a pesquisa
+
                 fetchUsers(search);
             }
         }
@@ -65,7 +64,7 @@ const SearchBar = () => {
                         placeholder="Search GitHub User..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={handleKeyDown} // Adicionando o evento de tecla
+                        onKeyDown={handleKeyDown}
                         size="lg"
                         color={'black'}
                         borderRadius="6px"
