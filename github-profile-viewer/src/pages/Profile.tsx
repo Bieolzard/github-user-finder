@@ -8,6 +8,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';  // Importando a localidade em português
 import InfiniteScroll from 'react-infinite-scroll-component'; // Importando o Infinite Scroll
 import Header from '../components/Header'; // Importando o Header
+import RepoList from '../components/RepoList.js'; // Importando o Header
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-expect-error    
 import FollowersIcon from '../icons/followers';
@@ -71,45 +72,49 @@ const Profile = () => {
   const { t } = useTranslation();
 
   // Função para buscar os dados do usuário e repositórios
- // Função para buscar os dados do usuário e repositórios
-const fetchData = async (page: number) => {
-  try {
-    setLoading(true);
-    const userResponse = await axiosInstance.get(`/users/${username}`);
-    
-    // Verificar se o usuário realmente existe (erro 404)
-    if (userResponse.status === 404) {
-      setError(t("error.userNotFound"));
+  // Função para buscar os dados do usuário e repositórios
+  const fetchData = async (page: number) => {
+    try {
+      setLoading(true);
+      const userResponse = await axiosInstance.get(`/users/${username}`);
+
+      // Verificar se o usuário realmente existe (erro 404)
+      if (userResponse.status === 404) {
+        setError(t("error.userNotFound"));
+        setLoading(false);
+        return; // Parar a execução se o usuário não for encontrado
+      }
+
+      const repoResponse = await axiosInstance.get(`/users/${username}/repos?per_page=10&page=${page}`);
+
+      // Validação com Zod
+      const userValidated = userSchema.parse(userResponse.data);
+      const reposValidated = repoResponse.data.map((repo: unknown) => repoSchema.parse(repo));
+
+      if (!userValidated.email) {
+        console.warn("E-mail não disponível para o usuário:", username);
+      }
+
+      setUserData(userValidated);
+      setRepos((prevRepos) => {
+        const newRepos = [...prevRepos, ...reposValidated];
+        return Array.from(new Set(newRepos.map(repo => repo.name)))  // Garantindo que o nome do repositório seja único
+          .map(name => newRepos.find(repo => repo.name === name));  // Extrai os objetos únicos baseados no nome
+      });
       setLoading(false);
-      return; // Parar a execução se o usuário não for encontrado
+
+      if (reposValidated.length < 10) {
+        setHasMore(false);
+      } else {
+        setHasMore(true); // Garantir que a flag continue verdadeira se ainda houver mais repositórios
+      }
+
+    } catch (err) {
+      console.error(err);
+      setError(t("Usuário não possui repositórios publicados até o momento")); // Tratamento para erro genérico
+      setLoading(false);
     }
-
-    const repoResponse = await axiosInstance.get(`/users/${username}/repos?per_page=10&page=${page}`);
-
-    // Validação com Zod
-    const userValidated = userSchema.parse(userResponse.data);
-    const reposValidated = repoResponse.data.map((repo: unknown) => repoSchema.parse(repo));
-
-    setUserData(userValidated);
-    setRepos((prevRepos) => {
-      const newRepos = [...prevRepos, ...reposValidated];
-      return Array.from(new Set(newRepos.map(repo => repo.name)))  // Garantindo que o nome do repositório seja único
-        .map(name => newRepos.find(repo => repo.name === name));  // Extrai os objetos únicos baseados no nome
-    });
-    setLoading(false);
-
-    if (reposValidated.length < 10) {
-      setHasMore(false);
-    } else {
-      setHasMore(true); // Garantir que a flag continue verdadeira se ainda houver mais repositórios
-    }
-
-  } catch (err) {
-    console.error(err);
-    setError(t("Usuário não possui repositórios publicados até o momento")); // Tratamento para erro genérico
-    setLoading(false);
-  }
-};
+  };
 
 
   useEffect(() => {
@@ -125,86 +130,83 @@ const fetchData = async (page: number) => {
   }, [username]);
 
   const fetchMoreRepos = () => {
-  if (!loading && hasMore) {
-    setPage((prevPage) => {
-      const nextPage = prevPage + 1;
-      fetchData(nextPage); // Chama a função para buscar os repositórios da próxima página
-      return nextPage;  // Atualiza o estado da página
-    });
-  }
+    if (!loading && hasMore) {
+      setPage((prevPage) => {
+        const nextPage = prevPage + 1;
+        fetchData(nextPage); // Chama a função para buscar os repositórios da próxima página
+        return nextPage;  // Atualiza o estado da página
+      });
+    }
   };
 
-if (error) return (
-  <Box
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    position="absolute"
-    top="0"
-    left="0"
-    right="0"
-    bottom="0"
-    backgroundColor="white"
-    zIndex={999}
-  >
+  if (error) return (
     <Box
-      backgroundColor="red.500"
-      color="white"
-      padding="16px"
-      borderRadius="8px"
       display="flex"
-      justifyContent="space-between"
+      justifyContent="center"
       alignItems="center"
-      width="90%"
-      maxWidth="500px"
+      position="absolute"
+      top="0"
+      left="0"
+      right="0"
+      bottom="0"
+      backgroundColor="white"
+      zIndex={999}
     >
-      <Text fontSize="lg" fontWeight="bold">
-        {error && (
-  <Box
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    position="absolute"
-    top="0"
-    left="0"
-    right="0"
-    bottom="0"
-    backgroundColor="rgba(0, 0, 0, 0.5)"
-    zIndex={999}
-  >
-    <Box
-      backgroundColor="red.500"
-      color="white"
-      padding="16px"
-      borderRadius="8px"
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
-      width="90%"
-      maxWidth="500px"
-    >
-      <Text fontSize="lg" fontWeight="bold">
-        {error}
-      </Text>
-      <Button
-        onClick={() => setError(null)} // Fechar a mensagem de erro
-        backgroundColor="transparent"
-        border="none"
+      <Box
+        backgroundColor="red.500"
         color="white"
-        fontSize="xl"
+        padding="16px"
+        borderRadius="8px"
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        width="90%"
+        maxWidth="500px"
       >
-        ×
-      </Button>
+        <Text fontSize="lg" fontWeight="bold">
+          {error && (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              position="absolute"
+              top="0"
+              left="0"
+              right="0"
+              bottom="0"
+              backgroundColor="rgba(0, 0, 0, 0.5)"
+              zIndex={999}
+            >
+              <Box
+                backgroundColor="red.500"
+                color="white"
+                padding="16px"
+                borderRadius="8px"
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                width="90%"
+                maxWidth="500px"
+              >
+                <Text fontSize="lg" fontWeight="bold">
+                  {error}
+                </Text>
+                <Button
+                  onClick={() => setError(null)} // Fechar a mensagem de erro
+                  backgroundColor="transparent"
+                  border="none"
+                  color="white"
+                  fontSize="xl"
+                >
+                  ×
+                </Button>
+              </Box>
+            </Box>
+          )}
+        </Text>
+      </Box>
     </Box>
-  </Box>
-)}
-      </Text>
-    </Box>
-  </Box>
-);
-
-
-
+  );
   return (
     <Box backgroundColor={'#FCFCFC'}>
       <Header />
@@ -284,12 +286,16 @@ if (error) return (
                   <Loc width="24px" height="24px" />
                   <Text color="#4A5568" marginLeft={'8px'}> {userData.location}</Text>
                 </Box>}
-              {userData?.email &&
+              {userData?.email ? (
                 <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
                   <Email width="24px" height="24px" />
                   <Text color="#4A5568" marginLeft={'8px'}>{userData.email}</Text>
                 </Box>
-              }
+              ) : (
+                <Text color="#A0AEC0" fontStyle="italic">
+                  {t("profile.emailNotAvailable")}
+                </Text>
+              )}
               {userData?.blog && (
                 <Link href={userData.blog} >
                   <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
@@ -319,21 +325,32 @@ if (error) return (
             </VStack>
 
           </HStack>
-          {/* Botão de Contato */}
-          <Button
-            colorScheme="blue"
-            width="full"
-            marginTop={4}
-            color={'white'}
-            backgroundColor={'#8C19D2'}
-            _hover={{
-              backgroundColor: "#7A14C2",
-              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-            }}
-            transition="all 0.3s ease-in-out"
-          >
-            {t("profile.contact")}
-          </Button>
+         {/* Botão de Contato */}
+<Button
+  color={'white'}
+  backgroundColor={'#8C19D2'}
+  _hover={{
+    backgroundColor: "#7A14C2",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+  }}
+  transition="all 0.3s ease-in-out"
+  width="full"
+  marginTop={4}
+  onClick={() => {
+    if (userData?.email) {
+      window.location.href = `mailto:${userData.email}`;
+    } else if (userData?.twitter_username) {
+      window.location.href = `https://twitter.com/${userData.twitter_username}`;
+    } else if (userData?.blog) {
+      window.location.href = userData.blog;
+    }
+  }}
+>
+  {t("profile.contact")}
+</Button>
+
+
+
         </VStack>
 
         {/* Segunda Coluna (Repositórios) */}
@@ -349,7 +366,7 @@ if (error) return (
           className="scrollable" // Aplicando a classe CSS
           maxWidth={'856px'}
         >
-
+          {username && <RepoList username={username} setRepos={setRepos} />}
           <InfiniteScroll
             dataLength={repos.length}
             next={fetchMoreRepos}
