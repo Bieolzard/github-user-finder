@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Button, Image, Input, Spinner, Text } from '@chakra-ui/react';
 import { LuSearch } from 'react-icons/lu';
@@ -61,6 +61,26 @@ const Home = () => {
             }
         }
     };
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter' || event.key === 'k') {
+            handleSearch();
+        }
+    };
+
+    useEffect(() => {
+        const handleKeyPress = (event: KeyboardEvent) => {
+            if (event.key === 'k' && (event.ctrlKey || event.metaKey)) {
+                event.preventDefault();
+                document.getElementById('mobile-search')?.focus();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyPress);
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, []);
 
     return (
         <Box
@@ -133,6 +153,7 @@ const Home = () => {
                             placeholder={t("placeholder.search")}
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            onKeyDown={handleKeyDown}
                             style={{
                                 fontSize: '16px',
                                 padding: '12px 16px 12px 36px',
@@ -154,6 +175,7 @@ const Home = () => {
                             placeholder={t("placeholder.search")}
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            onKeyDown={handleKeyDown}
                             aria-label={t("aria.label.search")}
                             aria-describedby="search-helper-text"
                             borderRadius="6px"
